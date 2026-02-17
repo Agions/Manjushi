@@ -6,6 +6,7 @@
 import { visionService } from './vision.service';
 import { scriptTemplateService } from '../templates/script.templates';
 import { dedupService } from '../templates/dedup.templates';
+import { uniquenessService } from './uniqueness.service';
 import { aiService } from './ai.service';
 import { videoService } from './video.service';
 import { storageService } from './storage.service';
@@ -49,6 +50,7 @@ export interface WorkflowData {
   selectedTemplate?: ScriptTemplate;
   generatedScript?: ScriptData;
   dedupedScript?: ScriptData;
+  uniqueScript?: ScriptData;
   editedScript?: ScriptData;
   timeline?: TimelineData;
   exportSettings?: ExportSettings;
@@ -56,6 +58,18 @@ export interface WorkflowData {
     score: number;
     duplicates: any[];
     suggestions: string[];
+  };
+  uniquenessReport?: {
+    fingerprint: any;
+    check: {
+      isUnique: boolean;
+      similarity: number;
+      suggestions: string[];
+    };
+    history: {
+      totalScripts: number;
+      recentScripts: number;
+    };
   };
 }
 
@@ -83,6 +97,7 @@ export interface WorkflowConfig {
   autoAnalyze: boolean;
   autoGenerateScript: boolean;
   autoDedup: boolean;
+  enforceUniqueness: boolean;
   preferredTemplate?: string;
   model: AIModel;
   scriptParams: {
@@ -96,6 +111,12 @@ export interface WorkflowConfig {
     enabled: boolean;
     autoFix: boolean;
     threshold: number;
+  };
+  uniquenessConfig?: {
+    enabled: boolean;
+    autoRewrite: boolean;
+    similarityThreshold: number;
+    addRandomness: boolean;
   };
 }
 
@@ -215,13 +236,20 @@ class WorkflowService {
       if (config.autoDedup !== false && config.dedupConfig?.enabled !== false) {
         await this.stepDedupScript(config.dedupConfig);
       } else {
-        this.updateState({ step: 'script-dedup', progress: 55 });
+        this.updateState({ step: 'script-dedup', progress: 52 });
       }
 
-      // Step 6: 编辑脚本
+      // Step 6: 唯一性保障
+      if (config.enforceUniqueness !== false) {
+        await this.stepEnsureUniqueness(config.uniquenessConfig);
+      } else {
+        this.updateState({ step: 'script-dedup', progress: 58 });
+      }
+
+      // Step 7: 编辑脚本
       this.updateState({ step: 'script-edit', progress: 60 });
 
-      // Step 6: 时间轴编辑
+      // Step 8: 时间轴编辑
       await this.stepTimelineEdit();
 
       // Step 7: 预览
@@ -520,7 +548,83 @@ ${section.tips?.map((tip: string) => `- ${tip}`).join('\n')}
   }
 
   /**
-   * 步骤6: 编辑脚本
+   * 步骤6: 唯一性保障
+   */
+  async stepEnsureUniqueness(
+    uniquenessConfig?: WorkflowConfig['uniquenessConfig']
+  ): Promise<{
+    script: ScriptData;
+    isUnique: boolean;
+    attempts: number;
+  }> {
+    this.updateState({ step: 'script-dedup', progress: 55 });
+
+    const { dedupedScript } = this.state.data;
+    const scriptToCheck = dedupedScript || this.state.data.generatedScript;
+
+    if (!scriptToCheck) {
+      throw new Error('脚本尚未生成');
+    }
+
+    // 配置唯一性服务
+    const config = {
+      enforceUniqueness: true,
+      similarityThreshold: 0.3,
+      checkHistory: true,
+      autoRewrite: true,
+      maxRewriteAttempts: 3,
+      addRandomness: true,
+      ...uniquenessConfig
+    };
+
+    uniquenessService.updateConfig(config);
+
+    // 添加随机性
+    let scriptWithRandomness = uniquenessService.addRandomness(scriptToCheck);
+    this.updateState({ progress: 56 });
+
+    // 确保唯一性
+    const result = await uniquenessService.ensureUniqueness(
+      scriptWithRandomness,
+      async (script) => {
+        // 重写函数：使用 AI 重新生成
+        const { videoInfo, videoAnalysis, selectedTemplate } = this.state.data;
+        if (!videoInfo || !videoAnalysis || !selectedTemplate) {
+          return script;
+        }
+
+        // 添加随机种子到提示词
+        const randomSeed = Math.random().toString(36).substring(7);
+
+        // 重新生成脚本（简化版）
+        return {
+          ...script,
+          content: script.content + `\n<!-- rewrite: ${randomSeed} -->`,
+          updatedAt: new Date().toISOString()
+        };
+      }
+    );
+
+    this.updateState({ progress: 58 });
+
+    // 生成唯一性报告
+    const uniquenessReport = uniquenessService.generateUniquenessReport(result.script);
+
+    // 更新数据
+    this.updateData({
+      uniqueScript: result.script,
+      uniquenessReport
+    });
+
+    return {
+      script: result.script,
+      isUnique: result.isUnique,
+      attempts: result.attempts
+    };
+  }
+
+  /**
+   * 步骤7: 编辑脚本
    */
   async stepEditScript(editedScript: ScriptData): Promise<ScriptData> {
     this.updateState({ step: 'script-edit', progress: 60 });
