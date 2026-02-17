@@ -9,6 +9,7 @@ export { visionService } from './vision.service';
 export { workflowService } from './workflow.service';
 export { scriptTemplateService } from '../templates/script.templates';
 export { editorService, EditorService } from './editor.service';
+export { costService, CostService } from './cost.service';
 
 // 重新导出类型
 export type { AIResponse, RequestConfig } from './ai.service';
@@ -25,3 +26,8 @@ export type {
   EditorAction,
   EditorHistory
 } from './editor.service';
+export type {
+  CostRecord,
+  CostStats,
+  CostBudget
+} from './cost.service';
