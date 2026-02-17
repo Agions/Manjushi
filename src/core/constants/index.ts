@@ -217,11 +217,11 @@ export const LLM_MODELS = {
     recommended: true
   },
 
-  // 月之暗面 - Kimi 2.5 (2025-07)
+  // 月之暗面 - Kimi k2.5 (2025-07)
   MOONSHOT: {
     provider: 'moonshot',
-    name: 'Kimi 2.5',
-    modelId: 'kimi-2.5-latest',
+    name: 'Kimi k2.5',
+    modelId: 'kimi-k2.5-latest',
     version: '2025-07',
     maxTokens: 8192,
     contextWindow: 200000,

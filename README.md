@@ -52,7 +52,7 @@ ReelForge 是一款面向影视创作者和内容创作者的专业 AI 视频内
   - Anthropic (Claude 4)
   - 百度 (ERNIE 5.0)
   - 阿里 (Qwen 3.5)
-  - 月之暗面 (Kimi 2.5)
+  - 月之暗面 (Kimi k2.5)
   - 智谱 (GLM-5)
   - MiniMax (M2.5)
 

@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - **LLM Models (2026 Latest)**:
   - Baidu ERNIE 5.0 (2026-01)
   - Alibaba Qwen 3.5 (2026-01)
-  - Moonshot Kimi 2.5 (2025-07)
+  - Moonshot Kimi k2.5 (2025-07)
   - Zhipu GLM-5 (2026-01)
   - MiniMax M2.5 (2025-12)
 - **Constants**: Centralized LLM_MODELS with accurate pricing and capabilities
