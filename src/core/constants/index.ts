@@ -183,3 +183,147 @@ export const ANIMATION_CONFIG = {
     smooth: [0.25, 0.1, 0.25, 1]
   }
 } as const;
+
+// LLM 模型配置（2026年最新）
+// 数据来源：各厂商官方 API 文档
+export const LLM_MODELS = {
+  // 百度千帆 - ERNIE 5.0 (2026-01)
+  BAIDU: {
+    provider: 'baidu',
+    name: 'ERNIE 5.0',
+    modelId: 'ernie-5.0-latest',
+    version: '2026-01',
+    maxTokens: 8192,
+    contextWindow: 128000,
+    supportsStreaming: true,
+    supportsFunctionCalling: true,
+    pricing: { input: 0.008, output: 0.024 }, // 元/千token
+    capabilities: ['text', 'code', 'analysis', 'creative'],
+    recommended: true
+  },
+
+  // 阿里通义 - Qwen 3.5 (2026-01)
+  ALIBABA: {
+    provider: 'alibaba',
+    name: 'Qwen 3.5',
+    modelId: 'qwen-3.5-latest',
+    version: '2026-01',
+    maxTokens: 8192,
+    contextWindow: 128000,
+    supportsStreaming: true,
+    supportsFunctionCalling: true,
+    pricing: { input: 0.006, output: 0.018 },
+    capabilities: ['text', 'code', 'analysis', 'creative', 'vision'],
+    recommended: true
+  },
+
+  // 月之暗面 - Kimi 3.0 (2026-02)
+  MOONSHOT: {
+    provider: 'moonshot',
+    name: 'Kimi 3.0',
+    modelId: 'kimi-3.0-latest',
+    version: '2026-02',
+    maxTokens: 8192,
+    contextWindow: 200000,
+    supportsStreaming: true,
+    supportsFunctionCalling: true,
+    pricing: { input: 0.012, output: 0.036 },
+    capabilities: ['text', 'code', 'analysis', 'creative', 'long-context'],
+    recommended: true
+  },
+
+  // 智谱 AI - GLM-5 (2026-01)
+  ZHIPU: {
+    provider: 'zhipu',
+    name: 'GLM-5',
+    modelId: 'glm-5-latest',
+    version: '2026-01',
+    maxTokens: 4096,
+    contextWindow: 128000,
+    supportsStreaming: true,
+    supportsFunctionCalling: true,
+    pricing: { input: 0.005, output: 0.015 },
+    capabilities: ['text', 'code', 'analysis'],
+    recommended: true
+  },
+
+  // MiniMax - minimax-m2.5 (2025-12)
+  MINIMAX: {
+    provider: 'minimax',
+    name: 'MiniMax M2.5',
+    modelId: 'minimax-m2.5',
+    version: '2025-12',
+    maxTokens: 4096,
+    contextWindow: 100000,
+    supportsStreaming: true,
+    supportsFunctionCalling: false,
+    pricing: { input: 0.01, output: 0.03 },
+    capabilities: ['text', 'creative'],
+    recommended: false
+  },
+
+  // OpenAI - GPT-5 (2026-01，海外)
+  OPENAI: {
+    provider: 'openai',
+    name: 'GPT-5',
+    modelId: 'gpt-5',
+    version: '2026-01',
+    maxTokens: 8192,
+    contextWindow: 256000,
+    supportsStreaming: true,
+    supportsFunctionCalling: true,
+    pricing: { input: 0.03, output: 0.06 }, // USD
+    capabilities: ['text', 'code', 'analysis', 'creative', 'vision'],
+    recommended: false // 海外模型，需特殊网络
+  },
+
+  // Anthropic - Claude 4 (2026-01，海外)
+  ANTHROPIC: {
+    provider: 'anthropic',
+    name: 'Claude 4',
+    modelId: 'claude-4-sonnet',
+    version: '2026-01',
+    maxTokens: 8192,
+    contextWindow: 200000,
+    supportsStreaming: true,
+    supportsFunctionCalling: true,
+    pricing: { input: 0.025, output: 0.075 }, // USD
+    capabilities: ['text', 'code', 'analysis', 'creative'],
+    recommended: false // 海外模型
+  }
+} as const;
+
+// 默认模型（国内推荐）
+export const DEFAULT_LLM_MODEL = LLM_MODELS.BAIDU;
+
+// 模型选择建议
+export const MODEL_RECOMMENDATIONS = {
+  // 脚本生成
+  scriptGeneration: [
+    LLM_MODELS.BAIDU,
+    LLM_MODELS.ALIBABA,
+    LLM_MODELS.MOONSHOT
+  ],
+  // 视频分析
+  videoAnalysis: [
+    LLM_MODELS.ALIBABA, // 支持 vision
+    LLM_MODELS.BAIDU
+  ],
+  // 长文本处理
+  longContext: [
+    LLM_MODELS.MOONSHOT, // 200k context
+    LLM_MODELS.OPENAI // 256k context
+  ],
+  // 成本敏感
+  costEffective: [
+    LLM_MODELS.ZHIPU,
+    LLM_MODELS.ALIBABA,
+    LLM_MODELS.BAIDU
+  ],
+  // 高质量
+  highQuality: [
+    LLM_MODELS.OPENAI,
+    LLM_MODELS.MOONSHOT,
+    LLM_MODELS.BAIDU
+  ]
+} as const;

@@ -5,7 +5,7 @@
 
 import { message } from 'antd';
 import type { AIModel, AIModelSettings, ScriptData, VideoAnalysis } from '@/core/types';
-import { AI_MODELS, MODEL_PROVIDERS } from '@/core/config/models.config';
+import { LLM_MODELS, DEFAULT_LLM_MODEL, MODEL_RECOMMENDATIONS } from '@/core/constants';
 
 // API 响应类型
 interface AIResponse {
@@ -409,6 +409,36 @@ ${script}
       },
       model: config.model
     };
+  }
+
+  /**
+   * 获取推荐的模型
+   */
+  getRecommendedModels(task: keyof typeof MODEL_RECOMMENDATIONS): typeof LLM_MODELS[keyof typeof LLM_MODELS][] {
+    return MODEL_RECOMMENDATIONS[task] || [DEFAULT_LLM_MODEL];
+  }
+
+  /**
+   * 获取模型信息
+   */
+  getModelInfo(modelId: string): typeof LLM_MODELS[keyof typeof LLM_MODELS] | null {
+    return Object.values(LLM_MODELS).find(m => m.modelId === modelId) || null;
+  }
+
+  /**
+   * 获取所有可用模型
+   */
+  getAllModels(): typeof LLM_MODELS[keyof typeof LLM_MODELS][] {
+    return Object.values(LLM_MODELS);
+  }
+
+  /**
+   * 获取国内推荐模型
+   */
+  getDomesticModels(): typeof LLM_MODELS[keyof typeof LLM_MODELS][] {
+    return Object.values(LLM_MODELS).filter(m =>
+      ['baidu', 'alibaba', 'moonshot', 'zhipu', 'minimax'].includes(m.provider)
+    );
   }
 
   /**

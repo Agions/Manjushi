@@ -39,7 +39,7 @@ import {
 } from '@ant-design/icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useModel, useModelCost, useRecommendedModel } from '@/core/hooks/useModel';
-import { AI_MODELS, MODEL_PROVIDERS, getRecommendedModels } from '@/core/config/models.config';
+import { LLM_MODELS, MODEL_RECOMMENDATIONS, DEFAULT_LLM_MODEL } from '@/core/constants';
 import type { AIModel, ModelCategory, ModelProvider } from '@/core/types';
 import styles from './index.module.less';
 
@@ -97,9 +97,25 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [testing, setTesting] = useState(false);
 
+  // 转换 LLM_MODELS 为组件格式
+  const allModels = useMemo(() => {
+    return Object.values(LLM_MODELS).map(m => ({
+      id: m.modelId,
+      name: m.name,
+      provider: m.provider as ModelProvider,
+      category: m.capabilities as string[],
+      description: `${m.name} - ${m.version}`,
+      version: m.version,
+      contextWindow: m.contextWindow,
+      maxTokens: m.maxTokens,
+      recommended: m.recommended,
+      pricing: m.pricing
+    }));
+  }, []);
+
   // 过滤模型
   const filteredModels = useMemo(() => {
-    let models = AI_MODELS;
+    let models = allModels;
 
     // 按分类过滤
     if (category !== 'all') {
@@ -122,7 +138,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
     }
 
     return models;
-  }, [category, provider, searchQuery]);
+  }, [allModels, category, provider, searchQuery]);
 
   // 处理模型选择
   const handleSelect = (modelId: string) => {
