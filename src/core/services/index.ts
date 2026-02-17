@@ -10,6 +10,7 @@ export { workflowService } from './workflow.service';
 export { scriptTemplateService } from '../templates/script.templates';
 export { editorService, EditorService } from './editor.service';
 export { costService, CostService } from './cost.service';
+export { consistencyService, ConsistencyService } from './consistency.service';
 
 // 重新导出类型
 export type { AIResponse, RequestConfig } from './ai.service';
@@ -31,3 +32,11 @@ export type {
   CostStats,
   CostBudget
 } from './cost.service';
+export type {
+  Character,
+  NarrationStyle,
+  ConsistencyRule,
+  ConsistencyCheckpoint,
+  ConsistencyIssue,
+  CharacterLibrary
+} from './consistency.service';
