@@ -8,6 +8,22 @@ ReelForge 是一款面向影视创作者和内容创作者的专业 AI 视频内
 
 ## 更新日志 (2026-02-17)
 
+### v1.1.0 - 工作流优化与唯一性保障
+
+#### 新增功能
+- ✅ **9步完整工作流**: 上传 → 分析 → 模板 → 生成 → 去重 → 唯一性 → 编辑 → 时间轴 → 导出
+- ✅ **8种去重变体**: 保守型/平衡型/激进型/创意型/学术型/口语型/诗意型/技术型
+- ✅ **自动去重**: 根据相似度自动选择变体策略，无需用户介入
+- ✅ **唯一性保障**: 内容指纹 + 历史对比 + 自动重写
+- ✅ **原创性检测**: 精确匹配/语义相似/模板检测/结构重复
+
+#### 模型更新 (2026年最新)
+- ✅ **百度 ERNIE 5.0** (2026-01)
+- ✅ **阿里 Qwen 3.5** (2026-01)
+- ✅ **月之暗面 Kimi 2.5** (2025-07)
+- ✅ **智谱 GLM-5** (2026-01)
+- ✅ **MiniMax M2.5** (2025-12)
+
 ### v1.0.0 - 正式发布
 
 #### 核心功能
@@ -31,15 +47,14 @@ ReelForge 是一款面向影视创作者和内容创作者的专业 AI 视频内
 ### 1. AI 模型管理
 - **模型选择器**: 智能推荐最适合任务的 AI 模型
 - **成本估算**: 实时显示 API 调用成本
-- **多提供商支持**:
-  - OpenAI (GPT-4o, GPT-4o-mini)
-  - Anthropic (Claude 3 Opus, Claude 3.5 Sonnet)
-  - Google (Gemini 1.5 Pro, Gemini 1.5 Flash)
-  - 百度 (ERNIE 4.0)
-  - 阿里 (Qwen Max, Qwen Plus)
-  - 智谱 (GLM-4)
-  - 讯飞 (星火 V3.5)
-  - 腾讯 (混元 Pro)
+- **多提供商支持** (2026年最新):
+  - OpenAI (GPT-5)
+  - Anthropic (Claude 4)
+  - 百度 (ERNIE 5.0)
+  - 阿里 (Qwen 3.5)
+  - 月之暗面 (Kimi 2.5)
+  - 智谱 (GLM-5)
+  - MiniMax (M2.5)
 
 ### 2. 视频处理
 - **视频上传**: 拖拽上传，支持多种格式
@@ -114,19 +129,27 @@ src/
 │   │   ├── app.config.ts    # 应用配置
 │   │   └── models.config.ts # AI 模型配置
 │   ├── constants/           # 常量定义
-│   │   └── index.ts         # 所有常量
+│   │   └── index.ts         # 所有常量（含 LLM_MODELS）
 │   ├── hooks/               # 自定义 Hooks
 │   │   ├── useModel.ts      # 模型管理
 │   │   ├── useProject.ts    # 项目管理
-│   │   └── useVideo.ts      # 视频处理
+│   │   ├── useVideo.ts      # 视频处理
+│   │   └── useWorkflow.ts   # 工作流管理
 │   ├── services/            # 服务层
 │   │   ├── ai.service.ts    # AI 服务
 │   │   ├── video.service.ts # 视频服务
-│   │   └── storage.service.ts # 存储服务
+│   │   ├── storage.service.ts # 存储服务
+│   │   ├── vision.service.ts  # 视觉识别
+│   │   ├── workflow.service.ts # 工作流服务
+│   │   └── uniqueness.service.ts # 唯一性保障
 │   ├── store/               # 状态管理
 │   │   ├── app.store.ts     # 应用状态
 │   │   ├── project.store.ts # 项目状态
 │   │   └── user.store.ts    # 用户状态
+│   ├── templates/           # 模板库
+│   │   ├── script.templates.ts   # 脚本模板（7种）
+│   │   ├── dedup.templates.ts    # 去重模板
+│   │   └── dedup.variants.ts     # 去重变体（8种）
 │   ├── types/               # 类型定义
 │   │   └── index.ts         # 所有类型
 │   └── utils/               # 工具函数
@@ -147,6 +170,7 @@ src/
 │   ├── ProjectDetail/       # 项目详情
 │   ├── Editor/              # 编辑器
 │   ├── VideoStudio/         # 视频工作室
+│   ├── Workflow/            # 工作流（9步）
 │   └── Settings/            # 设置
 ├── layouts/                 # 布局组件
 ├── assets/                  # 静态资源
