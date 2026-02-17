@@ -8,16 +8,16 @@ All notable changes to this project will be documented in this file.
 - **Project Name**: ReelForge → CineCraft (电影工坊)
   - New ASCII art logo
   - Updated all documentation references
+  - GitHub: https://github.com/Agions/CineCraft
 
 ### Added
-- **9-Step Workflow**: Complete video creation workflow (upload → analyze → template → generate → dedup → uniqueness → edit → timeline → export)
-- **8 Dedup Variants**: Conservative, Balanced, Aggressive, Creative, Academic, Casual, Poetic, Technical
-- **Auto Dedup**: Automatic variant selection based on similarity, no user intervention needed
-- **Uniqueness Service**: Content fingerprinting + history comparison + auto-rewrite
-- **Originality Detection**: Exact match, semantic similarity, template detection, structural duplication
+- **8-Step Drama Workflow**: Novel → Script → Storyboard → Character → Scene → Animation → Voiceover → Export
+- **Novel Parser**: Automatic novel-to-script conversion with character extraction
+- **Storyboard Generator**: AI-powered panel generation from script scenes
+- **Character Consistency**: Character appearance and personality management
+- **Drama Style System**: Genre/tone/pacing/art style management for comic dramas
 - **Vision Service**: Advanced scene detection, object detection (10 classes), 5-dimension emotion analysis
-- **Script Templates**: 7 professional templates (product review, tutorial, knowledge, story, news, entertainment, vlog)
-- **Workflow Service**: Orchestrates complete workflow with automatic scene-script matching
+- **Novel Service**: Parse novels, convert to scripts, generate storyboards
 
 ### Updated
 - **LLM Models (2026 Latest)**:
@@ -31,12 +31,12 @@ All notable changes to this project will be documented in this file.
 - **ModelSelector**: Updated to use new model configuration
 
 ### Technical
-- Added `useWorkflow` hook for workflow state management
-- Added `dedup.templates.ts` with 4 detection strategies
-- Added `dedup.variants.ts` with 8 rewrite strategies
-- Added `uniqueness.service.ts` for content fingerprinting
+- Added `useNovel` hook for novel parsing and script generation
+- Added `useConsistency` hook for character and style management
+- Added `novel.service.ts` for novel-to-script conversion
+- Added `consistency.service.ts` for character consistency
+- Added `drama.workflow.service.ts` for drama generation workflow
 - Added `vision.service.ts` for video analysis
-- Added `workflow.service.ts` for workflow orchestration
 
 ## [1.0.0] - 2026-02-17
 
@@ -54,8 +54,10 @@ All notable changes to this project will be documented in this file.
 
 ### Features
 - **Model Selector**: Smart AI model selection with cost estimation
-- **Video Uploader**: Drag-and-drop upload with preview
-- **Script Generator**: AI-powered script generation with customization
+- **Novel Parser**: Upload and parse novels (TXT/EPUB/PDF)
+- **Script Generator**: AI-powered script generation from novels
+- **Storyboard Generator**: Automatic storyboard creation from scripts
+- **Character Designer**: AI character generation with consistency
 - **Project Management**: Complete project lifecycle management
 - **Storage Service**: Persistent local storage for projects and settings
 

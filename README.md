@@ -333,4 +333,4 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 
 如有问题或建议，欢迎提交 Issue 或联系开发者。
 
-**GitHub**: https://github.com/Agions/reelforge
+**GitHub**: https://github.com/Agions/CineCraft
