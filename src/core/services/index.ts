@@ -8,6 +8,7 @@ export { visionService } from './vision.service';
 export { dramaWorkflowService, DramaWorkflowService } from './drama.workflow.service';
 export { costService, CostService } from './cost.service';
 export { consistencyService, ConsistencyService } from './consistency.service';
+export { enhancedConsistencyService, EnhancedConsistencyService } from './enhanced-consistency.service';
 export { novelService, NovelService } from './novel.service';
 export { scriptTemplateService, ScriptTemplateService } from './scriptTemplate.service';
 export { lipSyncService, LipSyncService } from './lip-sync.service';
