@@ -10,6 +10,19 @@ export { costService, CostService } from './cost.service';
 export { consistencyService, ConsistencyService } from './consistency.service';
 export { novelService, NovelService } from './novel.service';
 export { scriptTemplateService, ScriptTemplateService } from './scriptTemplate.service';
+export { lipSyncService, LipSyncService } from './lip-sync.service';
+
+// 工作流增强
+export {
+  withRetry,
+  withTimeout,
+  withRetryAndTimeout,
+  workflowCache,
+  checkpointStorage,
+  createCheckpoint,
+  LocalCheckpointStorage
+} from './workflow-enhance.service';
+export type { RetryConfig, Checkpoint, CheckpointStorage, CacheEntry } from './workflow-enhance.service';
 
 // Legacy services (to be migrated)
 export * from './legacy/aiService';
