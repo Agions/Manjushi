@@ -1,671 +1,311 @@
 /**
- * 解说混剪工作流页面
- * 集成视觉识别、脚本生成、视频混剪的完整流程
+ * 专业工作流创建页面
  */
 
-import React, { useState, useCallback } from 'react';
-import {
-  Steps,
-  Card,
-  Button,
+import React, { useState } from 'react';
+import { 
+  Card, 
+  Button, 
+  Steps, 
+  Typography, 
+  Space, 
   Upload,
-  Progress,
-  Alert,
-  Space,
-  Typography,
-  Row,
-  Col,
   Select,
+  Input,
+  Slider,
+  Divider,
+  Tag,
+  List,
+  Avatar,
+  Progress,
   Radio,
-  message
+  Alert
 } from 'antd';
-import {
-  UploadOutlined,
-  EyeOutlined,
+import { 
+  UploadOutlined, 
   FileTextOutlined,
-  EditOutlined,
-  VideoCameraOutlined,
   PlayCircleOutlined,
-  DownloadOutlined,
-  PauseCircleOutlined,
-  ReloadOutlined
+  SettingOutlined,
+  ThunderboltOutlined,
+  RightOutlined,
+  ArrowLeftOutlined,
+  CheckCircleOutlined,
+  CloudUploadOutlined,
+  PictureOutlined,
+  AudioOutlined,
+  ExportOutlined
 } from '@ant-design/icons';
-import { useModel, useWorkflow } from '@/core/hooks';
-import { scriptTemplateService } from '@/core/services';
-import type { WorkflowStep } from '@/core/hooks';
-import VideoUploader from '@/components/business/VideoUploader';
-import { ModelSelector } from '@/components/business/ModelSelector';
-import ScriptEditor from '@/components/business/ScriptEditor';
-import ExportPanel from '@/components/business/ExportPanel';
-import { VideoTimeline } from '@/components/business/VideoTimeline';
-import type { ScriptTemplate, AIModel } from '@/core/types';
-
 import styles from './index.module.less';
 
 const { Title, Text, Paragraph } = Typography;
-const { Step } = Steps;
-const { Option } = Select;
 
-// 工作流步骤配置
-const WORKFLOW_STEPS: Array<{
-  key: WorkflowStep;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}> = [
-  {
-    key: 'upload',
-    title: '上传视频',
-    description: '选择要处理的视频文件',
-    icon: <UploadOutlined />
+// 10步工作流配置
+const WORKFLOW_STEPS = [
+  { 
+    key: 'novel-upload', 
+    title: '上传小说', 
+    icon: <UploadOutlined />,
+    color: '#6366f1',
+    description: '上传 TXT/EPUB/PDF 文件'
   },
-  {
-    key: 'analyze',
-    title: '视频分析',
-    description: 'AI 智能分析视频内容',
-    icon: <EyeOutlined />
+  { 
+    key: 'novel-parse', 
+    title: '智能解析', 
+    icon: <FileTextOutlined />,
+    color: '#8b5cf6',
+    description: 'AI 提取角色和章节'
   },
-  {
-    key: 'template-select',
-    title: '选择模板',
-    description: '选择解说脚本模板',
-    icon: <FileTextOutlined />
+  { 
+    key: 'script-generate', 
+    title: '剧本生成', 
+    icon: <PlayCircleOutlined />,
+    color: '#ec4899',
+    description: '生成场景化剧本'
   },
-  {
-    key: 'script-generate',
-    title: '生成脚本',
-    description: 'AI 自动生成解说词',
-    icon: <FileTextOutlined />
+  { 
+    key: 'storyboard-generate', 
+    title: '智能分镜', 
+    icon: <PictureOutlined />,
+    color: '#f59e0b',
+    description: 'AI 生成分镜面板'
   },
-  {
-    key: 'script-dedup',
-    title: '原创性检测',
-    description: '检测并优化重复内容',
-    icon: <FileTextOutlined />
+  { 
+    key: 'character-design', 
+    title: '角色设计', 
+    icon: <Avatar />,
+    color: '#10b981',
+    description: '设计角色形象'
   },
-  {
-    key: 'script-edit',
-    title: '编辑脚本',
-    description: '修改和完善解说词',
-    icon: <EditOutlined />
+  { 
+    key: 'scene-render', 
+    title: '场景渲染', 
+    icon: <PictureOutlined />,
+    color: '#14b8a6',
+    description: 'AI 渲染漫画场景'
   },
-  {
-    key: 'timeline-edit',
-    title: '时间轴',
-    description: '调整视频和音频',
-    icon: <VideoCameraOutlined />
+  { 
+    key: 'animation', 
+    title: '动态合成', 
+    icon: <PlayCircleOutlined />,
+    color: '#3b82f6',
+    description: '镜头运动和转场'
   },
-  {
-    key: 'preview',
-    title: '预览',
-    description: '预览最终效果',
-    icon: <PlayCircleOutlined />
+  { 
+    key: 'voiceover', 
+    title: '配音配乐', 
+    icon: <AudioOutlined />,
+    color: '#f97316',
+    description: 'TTS 语音和 BGM'
   },
-  {
-    key: 'export',
-    title: '导出',
-    description: '导出最终视频',
-    icon: <DownloadOutlined />
-  }
+  { 
+    key: 'lip-sync', 
+    title: '对口型', 
+    icon: <AudioOutlined />,
+    color: '#ef4444',
+    description: 'Wav2Lip 口型同步'
+  },
+  { 
+    key: 'export', 
+    title: '导出发布', 
+    icon: <ExportOutlined />,
+    color: '#6366f1',
+    description: '生成成品视频'
+  },
 ];
 
-export const WorkflowPage: React.FC = () => {
-  // 工作流状态
-  const {
-    state,
-    isRunning,
-    isPaused,
-    isCompleted,
-    hasError,
-    error,
-    currentStep,
-    progress,
-    data,
-    start,
-    analyze,
-    selectTemplate,
-    generateScript,
-    dedupScript,
-    ensureUniqueness,
-    editScript,
-    editTimeline,
-    preview,
-    export: exportVideo,
-    pause,
-    resume,
-    cancel,
-    reset,
-    jumpToStep
-  } = useWorkflow({
-    onStepChange: (step) => {
-      message.info(`进入步骤: ${WORKFLOW_STEPS.find(s => s.key === step)?.title}`);
-    },
-    onError: (err) => {
-      message.error(err);
-    },
-    onComplete: () => {
-      message.success('工作流完成！');
-    }
-  });
+// 模板选项
+const TEMPLATES = [
+  { id: 'romance', name: '浪漫爱情', icon: '💕', color: '#ec4899' },
+  { id: 'action', name: '动作冒险', icon: '⚔️', color: '#ef4444' },
+  { id: 'fantasy', name: '奇幻玄幻', icon: '🧙', color: '#8b5cf6' },
+  { id: 'comedy', name: '喜剧搞笑', icon: '😂', color: '#f59e0b' },
+  { id: 'mystery', name: '悬疑推理', icon: '🔍', color: '#64748b' },
+];
 
-  // 本地状态
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<ScriptTemplate | null>(null);
-  const [selectedModel, setSelectedModel] = useState<AIModel | null>(null);
-  const [scriptParams, setScriptParams] = useState({
-    style: 'professional',
-    tone: 'friendly',
-    length: 'medium' as const,
-    targetAudience: 'general',
-    language: 'zh' as const
-  });
+// 模型选项
+const MODELS = [
+  { value: 'gpt-4', label: 'GPT-4' },
+  { value: 'gpt-4-turbo', label: 'GPT-4 Turbo' },
+  { value: 'claude-3', label: 'Claude 3' },
+  { value: 'ernie-4', label: 'ERNIE 4.0' },
+  { value: 'qwen-max', label: 'Qwen Max' },
+];
 
-  // 模型列表
-  const { allModels: models } = useModel();
+const WorkflowPage: React.FC = () => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [projectName, setProjectName] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState('');
+  const [selectedModel, setSelectedModel] = useState('gpt-4');
+  const [chapters, setChapters] = useState(5);
 
-  // 模板列表
-  const templates = scriptTemplateService.getAllTemplates();
-  const _categories = scriptTemplateService.getCategories();
-
-  // 获取当前步骤索引
-  const currentStepIndex = WORKFLOW_STEPS.findIndex(s => s.key === currentStep);
-
-  // 开始工作流
-  const handleStart = useCallback(async () => {
-    if (!selectedFile || !selectedModel) {
-      message.error('请选择视频文件和 AI 模型');
-      return;
-    }
-
-    try {
-      await start('project_' + Date.now(), selectedFile, {
-        autoAnalyze: true,
-        autoGenerateScript: true,
-        preferredTemplate: selectedTemplate?.id,
-        model: selectedModel,
-        scriptParams
-      });
-    } catch (err) {
-      // 错误已在回调中处理
-    }
-  }, [selectedFile, selectedModel, selectedTemplate, scriptParams, start]);
-
-  // 渲染步骤内容
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 'upload':
-        return (
-          <Card title="上传视频" className={styles.stepCard}>
-            <VideoUploader
-              onUpload={setSelectedFile}
-              accept="video/*"
-              maxSize={1024 * 1024 * 1024} // 1GB
-            />
-            {selectedFile && (
-              <Alert
-                message={`已选择: ${selectedFile.name}`}
-                type="success"
-                showIcon
-                className={styles.fileInfo}
-              />
-            )}
-          </Card>
-        );
-
-      case 'analyze':
-        return (
-          <Card title="视频分析" className={styles.stepCard}>
-            {data.videoAnalysis ? (
-              <div className={styles.analysisResult}>
-                <Row gutter={[16, 16]}>
-                  <Col span={8}>
-                    <Card size="small" title="场景检测">
-                      <Text strong>{data.videoAnalysis.scenes.length}</Text>
-                      <Text> 个场景</Text>
-                    </Card>
-                  </Col>
-                  <Col span={8}>
-                    <Card size="small" title="物体识别">
-                      <Text strong>{data.videoAnalysis.objects?.length || 0}</Text>
-                      <Text> 个物体</Text>
-                    </Card>
-                  </Col>
-                  <Col span={8}>
-                    <Card size="small" title="情感分析">
-                      <Text strong>{data.videoAnalysis.emotions?.length || 0}</Text>
-                      <Text> 个片段</Text>
-                    </Card>
-                  </Col>
-                </Row>
-                <div className={styles.analysisSummary}>
-                  <Title level={5}>分析摘要</Title>
-                  <Paragraph>{data.videoAnalysis.summary}</Paragraph>
-                </div>
-              </div>
-            ) : (
-              <div className={styles.loadingArea}>
-                <Progress percent={progress} status="active" />
-                <Text>正在分析视频内容...</Text>
-              </div>
-            )}
-          </Card>
-        );
-
-      case 'template-select':
-        return (
-          <Card title="选择解说模板" className={styles.stepCard}>
-            <Row gutter={[16, 16]}>
-              {templates.map(template => (
-                <Col span={8} key={template.id}>
-                  <Card
-                    hoverable
-                    className={`${styles.templateCard} ${
-                      selectedTemplate?.id === template.id ? styles.selected : ''
-                    }`}
-                    onClick={() => setSelectedTemplate(template)}
-                    title={template.name}
-                  >
-                    <Paragraph ellipsis={{ rows: 2 }}>
-                      {template.description}
-                    </Paragraph>
-                    <Space wrap>
-                      {template.tags.map(tag => (
-                        <span key={tag} className={styles.tag}>{tag}</span>
-                      ))}
-                    </Space>
-                    {template.recommended && (
-                      <div className={styles.recommendedBadge}>推荐</div>
-                    )}
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          </Card>
-        );
-
-      case 'script-generate':
-        return (
-          <Card title="生成脚本" className={styles.stepCard}>
-            <Space direction="vertical" style={{ width: '100%' }} size="large">
-              <ModelSelector
-                onSelect={(modelId) => {
-                  const model = models.find(m => m.id === modelId);
-                  setSelectedModel(model || null);
-                }}
-                taskType="script"
-              />
-
-              <Card size="small" title="脚本参数">
-                <Row gutter={[16, 16]}>
-                  <Col span={12}>
-                    <div className={styles.paramItem}>
-                      <Text>风格</Text>
-                      <Select
-                        value={scriptParams.style}
-                        onChange={v => setScriptParams(p => ({ ...p, style: v }))}
-                        style={{ width: '100%' }}
-                      >
-                        <Option value="professional">专业</Option>
-                        <Option value="casual">轻松</Option>
-                        <Option value="humorous">幽默</Option>
-                        <Option value="emotional">情感</Option>
-                      </Select>
-                    </div>
-                  </Col>
-                  <Col span={12}>
-                    <div className={styles.paramItem}>
-                      <Text>语气</Text>
-                      <Select
-                        value={scriptParams.tone}
-                        onChange={v => setScriptParams(p => ({ ...p, tone: v }))}
-                        style={{ width: '100%' }}
-                      >
-                        <Option value="friendly">友好</Option>
-                        <Option value="authoritative">权威</Option>
-                        <Option value="enthusiastic">热情</Option>
-                        <Option value="calm">平静</Option>
-                      </Select>
-                    </div>
-                  </Col>
-                  <Col span={12}>
-                    <div className={styles.paramItem}>
-                      <Text>时长</Text>
-                      <Radio.Group
-                        value={scriptParams.length}
-                        onChange={e => setScriptParams(p => ({ ...p, length: e.target.value }))}
-                      >
-                        <Radio.Button value="short">简短</Radio.Button>
-                        <Radio.Button value="medium">适中</Radio.Button>
-                        <Radio.Button value="long">详细</Radio.Button>
-                      </Radio.Group>
-                    </div>
-                  </Col>
-                  <Col span={12}>
-                    <div className={styles.paramItem}>
-                      <Text>语言</Text>
-                      <Radio.Group
-                        value={scriptParams.language}
-                        onChange={e => setScriptParams(p => ({ ...p, language: e.target.value }))}
-                      >
-                        <Radio.Button value="zh">中文</Radio.Button>
-                        <Radio.Button value="en">English</Radio.Button>
-                      </Radio.Group>
-                    </div>
-                  </Col>
-                </Row>
-              </Card>
-
-              {isRunning && (
-                <div className={styles.loadingArea}>
-                  <Progress percent={progress} status="active" />
-                  <Text>正在生成解说脚本...</Text>
-                </div>
-              )}
-            </Space>
-          </Card>
-        );
-
-      case 'script-dedup':
-        return (
-          <Card title="原创性检测" className={styles.stepCard}>
-            {data.originalityReport ? (
-              <div className={styles.dedupResult}>
-                <Row gutter={[16, 16]}>
-                  <Col span={8}>
-                    <Card size="small" title="原创性分数">
-                      <div className={styles.scoreDisplay}>
-                        <Text className={
-                          data.originalityReport.score >= 80 ? styles.scoreHigh :
-                          data.originalityReport.score >= 60 ? styles.scoreMedium :
-                          styles.scoreLow
-                        }>
-                          {data.originalityReport.score}分
-                        </Text>
-                      </div>
-                    </Card>
-                  </Col>
-                  <Col span={8}>
-                    <Card size="small" title="重复段落">
-                      <Text strong>{data.originalityReport.duplicates.length}</Text>
-                      <Text> 处</Text>
-                    </Card>
-                  </Col>
-                  <Col span={8}>
-                    <Card size="small" title="建议">
-                      <Text strong>{data.originalityReport.suggestions.length}</Text>
-                      <Text> 条</Text>
-                    </Card>
-                  </Col>
-                </Row>
-
-                {data.originalityReport.duplicates.length > 0 && (
-                  <div className={styles.duplicateList}>
-                    <Title level={5}>重复内容</Title>
-                    {data.originalityReport.duplicates.map((dup, index) => (
-                      <Alert
-                        key={dup.id}
-                        message={`重复 #${index + 1} - ${dup.type === 'exact' ? '完全重复' : dup.type === 'similar' ? '相似内容' : '模板套话'}`}
-                        description={
-                          <div>
-                            <Paragraph ellipsis={{ rows: 2 }}>
-                              <Text type="secondary">原文：</Text>
-                              {dup.target.content}
-                            </Paragraph>
-                            <Text type="warning">{dup.suggestion}</Text>
-                          </div>
-                        }
-                        type={dup.type === 'exact' ? 'error' : dup.type === 'similar' ? 'warning' : 'info'}
-                        showIcon
-                        className={styles.duplicateAlert}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                {data.originalityReport.suggestions.length > 0 && (
-                  <div className={styles.suggestionList}>
-                    <Title level={5}>优化建议</Title>
-                    <ul>
-                      {data.originalityReport.suggestions.map((suggestion, index) => (
-                        <li key={index}>{suggestion}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* 唯一性报告 */}
-                {data.uniquenessReport && (
-                  <div className={styles.uniquenessReport}>
-                    <Title level={5}>唯一性检测</Title>
-                    <Row gutter={[16, 16]}>
-                      <Col span={12}>
-                        <Card size="small">
-                          <div className={styles.uniquenessStatus}>
-                            <Text>唯一性状态：</Text>
-                            <Text strong className={
-                              data.uniquenessReport.check.isUnique ? styles.unique : styles.notUnique
-                            }>
-                              {data.uniquenessReport.check.isUnique ? '✅ 唯一' : '⚠️ 需优化'}
-                            </Text>
-                          </div>
-                          <div className={styles.similarityScore}>
-                            <Text>历史相似度：</Text>
-                            <Text strong>{(data.uniquenessReport.check.similarity * 100).toFixed(1)}%</Text>
-                          </div>
-                        </Card>
-                      </Col>
-                      <Col span={12}>
-                        <Card size="small" title="历史记录">
-                          <div>
-                            <Text>总脚本数：</Text>
-                            <Text strong>{data.uniquenessReport.history.totalScripts}</Text>
-                          </div>
-                          <div>
-                            <Text>近7天：</Text>
-                            <Text strong>{data.uniquenessReport.history.recentScripts}</Text>
-                          </div>
-                        </Card>
-                      </Col>
-                    </Row>
-
-                    {data.uniquenessReport.check.suggestions.length > 0 && (
-                      <Alert
-                        message="唯一性建议"
-                        description={
-                          <ul>
-                            {data.uniquenessReport.check.suggestions.map((s: string, i: number) => (
-                              <li key={i}>{s}</li>
-                            ))}
-                          </ul>
-                        }
-                        type={data.uniquenessReport.check.isUnique ? 'success' : 'warning'}
-                        showIcon
-                        className={styles.uniquenessAlert}
-                      />
-                    )}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className={styles.loadingArea}>
-                <Progress percent={progress} status="active" />
-                <Text>正在检测原创性...</Text>
-              </div>
-            )}
-          </Card>
-        );
-
-      case 'script-edit':
-        return (
-          <Card title="编辑脚本" className={styles.stepCard}>
-            {data.uniqueScript && (
-              <ScriptEditor
-                script={data.uniqueScript}
-                onSave={editScript}
-                scenes={data.videoAnalysis?.scenes}
-              />
-            )}
-          </Card>
-        );
-
-      case 'timeline-edit':
-        return (
-          <Card title="时间轴编辑" className={styles.stepCard}>
-            {data.timeline && data.videoInfo && (
-              <VideoTimeline
-                timeline={data.timeline}
-                videoInfo={data.videoInfo}
-                script={data.editedScript || data.generatedScript}
-                onSave={editTimeline}
-              />
-            )}
-          </Card>
-        );
-
-      case 'preview':
-        return (
-          <Card title="预览" className={styles.stepCard}>
-            <div className={styles.previewArea}>
-              <video
-                controls
-                className={styles.previewVideo}
-                poster={data.videoInfo?.thumbnail}
-              >
-                <source src={data.videoInfo?.path} />
-              </video>
-              <div className={styles.previewInfo}>
-                <Title level={5}>{data.generatedScript?.title}</Title>
-                <Paragraph>
-                  预计时长: {Math.round(data.videoInfo?.duration || 0)}秒
-                </Paragraph>
-              </div>
-            </div>
-          </Card>
-        );
-
-      case 'export':
-        return (
-          <Card title="导出视频" className={styles.stepCard}>
-            <ExportPanel onExport={exportVideo} />
-          </Card>
-        );
-
-      default:
-        return null;
-    }
+  const handleStart = () => {
+    console.log('开始工作流:', { projectName, selectedTemplate, selectedModel, chapters });
   };
 
   return (
-    <div className={styles.workflowPage}>
-      <Title level={2}>解说混剪工作流</Title>
-      <Paragraph type="secondary">
-        一站式视频解说创作工具，从视频分析到最终导出
-      </Paragraph>
-
-      {/* 步骤条 */}
-      <Card className={styles.stepsCard}>
-        <Steps
-          current={currentStepIndex}
-          direction="horizontal"
-          size="small"
-        >
-          {WORKFLOW_STEPS.map(step => (
-            <Step
-              key={step.key}
-              title={step.title}
-              description={step.description}
-              icon={step.icon}
-            />
-          ))}
-        </Steps>
-      </Card>
-
-      {/* 错误提示 */}
-      {hasError && (
-        <Alert
-          message="工作流出错"
-          description={error}
-          type="error"
-          showIcon
-          closable
-          className={styles.errorAlert}
-        />
-      )}
-
-      {/* 进度条 */}
-      {isRunning && (
-        <Card className={styles.progressCard}>
-          <Progress
-            percent={Math.round(progress)}
-            status={hasError ? 'exception' : 'active'}
-            strokeColor={{
-              '0%': '#108ee9',
-              '100%': '#87d068'
-            }}
-          />
-          <Text type="secondary">
-            当前步骤: {WORKFLOW_STEPS.find(s => s.key === currentStep)?.title}
+    <div className={styles.workflow}>
+      {/* 页面头部 */}
+      <div className={styles.header}>
+        <div className={styles.headerContent}>
+          <Title level={2} className={styles.title}>
+            创建新漫剧项目
+          </Title>
+          <Text type="secondary" className={styles.desc}>
+            10 步智能工作流，将小说转化为精彩漫剧
           </Text>
-        </Card>
-      )}
+        </div>
+      </div>
 
-      {/* 步骤内容 */}
-      {renderStepContent()}
+      <div className={styles.content}>
+        <div className={styles.main}>
+          {/* 项目设置 */}
+          <Card className={styles.configCard}>
+            <Title level={4}>📝 项目设置</Title>
+            
+            <div className={styles.formGroup}>
+              <Text strong>项目名称</Text>
+              <Input 
+                placeholder="输入项目名称" 
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                size="large"
+                className={styles.input}
+              />
+            </div>
 
-      {/* 操作按钮 */}
-      <Card className={styles.actionCard}>
-        <Space>
-          {currentStep === 'upload' && (
-            <Button
-              type="primary"
-              size="large"
+            <div className={styles.formGroup}>
+              <Text strong>选择类型</Text>
+              <div className={styles.templateGrid}>
+                {TEMPLATES.map((template) => (
+                  <div 
+                    key={template.id}
+                    className={`${styles.templateItem} ${selectedTemplate === template.id ? styles.selected : ''}`}
+                    onClick={() => setSelectedTemplate(template.id)}
+                    style={{ '--template-color': template.color } as React.CSSProperties}
+                  >
+                    <span className={styles.templateIcon}>{template.icon}</span>
+                    <span className={styles.templateName}>{template.name}</span>
+                    {selectedTemplate === template.id && (
+                      <CheckCircleOutlined className={styles.checkIcon} />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <Text strong>AI 模型</Text>
+              <Select
+                value={selectedModel}
+                onChange={setSelectedModel}
+                options={MODELS}
+                size="large"
+                className={styles.select}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <Text strong>生成章节数: {chapters}</Text>
+              <Slider 
+                min={1} 
+                max={20} 
+                value={chapters}
+                onChange={setChapters}
+              />
+            </div>
+          </Card>
+
+          {/* 工作流预览 */}
+          <Card className={styles.previewCard}>
+            <Title level={4}>🔄 工作流预览</Title>
+            
+            <Steps 
+              direction="vertical"
+              current={currentStep}
+              className={styles.previewSteps}
+              items={WORKFLOW_STEPS.map((step, idx) => ({
+                title: (
+                  <div className={`${styles.stepItem} ${idx <= currentStep ? styles.completed : ''}`}>
+                    <span className={styles.stepIcon} style={{ color: step.color }}>
+                      {step.icon}
+                    </span>
+                    <div className={styles.stepInfo}>
+                      <span className={styles.stepTitle}>{step.title}</span>
+                      <span className={styles.stepDesc}>{step.description}</span>
+                    </div>
+                  </div>
+                ),
+                description: '',
+                status: idx < currentStep ? 'finish' : idx === currentStep ? 'process' : 'wait'
+              }))}
+            />
+          </Card>
+        </div>
+
+        {/* 侧边栏 */}
+        <div className={styles.sidebar}>
+          <Card className={styles.summaryCard}>
+            <Title level={5}>📋 创建摘要</Title>
+            
+            <div className={styles.summaryItem}>
+              <Text type="</Text>
+             secondary">项目名称 <Text strong>{projectName || '未设置'}</Text>
+            </div>
+            
+            <div className={styles.summaryItem}>
+              <Text type="secondary">漫剧类型</Text>
+              <Tag color="blue">
+                {TEMPLATES.find(t => t.id === selectedTemplate)?.name || '未选择'}
+              </Tag>
+            </div>
+            
+            <div className={styles.summaryItem}>
+              <Text type="secondary">AI 模型</Text>
+              <Tag color="purple">{selectedModel}</Tag>
+            </div>
+            
+            <div className={styles.summaryItem}>
+              <Text type="secondary">章节数</Text>
+              <Tag color="green">{chapters}</Tag>
+            </div>
+
+            <Divider />
+
+            <div className={styles.price}>
+              <Text type="secondary">预估消耗</Text>
+              <Title level={4} className={styles.priceValue}>
+                ~{chapters * 0.5}
+                <Text type="secondary" className={styles.priceUnit}> 元</Text>
+              </Title>
+              <Text type="secondary" className={styles.priceNote}>
+                实际消耗根据内容长度计算
+              </Text>
+            </div>
+
+            <Button 
+              type="primary" 
+              size="large" 
+              block
+              icon={<ThunderboltOutlined />}
+              className={styles.startBtn}
+              disabled={!projectName || !selectedTemplate}
               onClick={handleStart}
-              disabled={!selectedFile || !selectedModel}
             >
-              开始创作
+              开始创建
             </Button>
-          )}
+          </Card>
 
-          {isRunning && (
-            <>
-              <Button
-                icon={isPaused ? <PlayCircleOutlined /> : <PauseCircleOutlined />}
-                onClick={isPaused ? resume : pause}
-              >
-                {isPaused ? '继续' : '暂停'}
-              </Button>
-              <Button danger onClick={cancel}>
-                取消
-              </Button>
-            </>
-          )}
-
-          {isCompleted && (
-            <Button
-              type="primary"
-              icon={<ReloadOutlined />}
-              onClick={reset}
-            >
-              开始新项目
-            </Button>
-          )}
-
-          {/* 步骤导航 */}
-          {currentStepIndex > 0 && currentStepIndex < WORKFLOW_STEPS.length - 1 && !isRunning && (
-            <>
-              <Button onClick={() => jumpToStep(WORKFLOW_STEPS[currentStepIndex - 1].key)}>
-                上一步
-              </Button>
-              <Button
-                type="primary"
-                onClick={() => jumpToStep(WORKFLOW_STEPS[currentStepIndex + 1].key)}
-              >
-                下一步
-              </Button>
-            </>
-          )}
-        </Space>
-      </Card>
+          {/* 提示 */}
+          <Alert
+            type="info"
+            showIcon
+            icon={<SettingOutlined />}
+            message="支持断点续传"
+            description="工作流支持中断继续，无需担心任务中断"
+            className={styles.tipAlert}
+          />
+        </div>
+      </div>
     </div>
   );
 };
