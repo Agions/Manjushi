@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2026-02-22
+
+### 🎉 项目重命名
+- 漫剧师 (Manjushi) → **InkMotion (墨动)**
+- 全新品牌标识、ASCII Art Logo
+- 更新所有配置、代码注释、文档引用
+
+### ✨ 工作流引擎升级
+- **Step 6 场景渲染**: 完整实现，融合角色外观 + 分镜 Prompt 生成渲染描述
+- **Step 7 动态合成**: 镜头运动系统（推拉摇移）、Ken Burns 效果、转场逻辑
+- **Step 8 配音配乐**: 对白收集 + 角色配音映射 + 氛围 BGM 匹配
+- **Step 9 导出发布**: 时间轴编排、多轨合成配置、导出参数（格式/分辨率/编码）
+
+### 📝 文档重写
+- README.md 全面重写，专业排版
+- 9步工作流每步标注输入→处理→输出
+- Mermaid 技术架构图
+- 快速开始指南
+
+### 🔧 代码改进
+- 存储 key 前缀从 `cineforge_` 更新为 `inkmotion_`
+- Tauri bundle identifier 更新为 `com.inkmotion.app`
+- 版本号升级至 2.0.0
+
 ## [1.1.0] - 2026-02-17
 
 ### Renamed

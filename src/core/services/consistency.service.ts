@@ -393,7 +393,7 @@ ${cp.issues.map(issue => `
 ${failed.length > 0 ? '- 优先处理失败项\n' : ''}${warnings.length > 0 ? '- 关注警告项\n' : ''}- 定期检查一致性
 
 ---
-*报告由 漫剧师 一致性服务生成*
+*报告由 InkMotion 一致性服务生成*
     `.trim();
   }
 

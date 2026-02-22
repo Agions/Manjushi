@@ -1,9 +1,9 @@
 {
-  "name": "manjushi",
+  "name": "inkmotion",
   "private": true,
-  "version": "1.1.0",
-  "description": "漫剧师 (Manjushi) - AI-powered comic drama video generation platform",
-  "author": "漫剧师 <manjushi@example.com>",
+  "version": "2.0.0",
+  "description": "InkMotion (墨动) - AI-Powered Comic Drama Video Creation Platform",
+  "author": "InkMotion <inkmotion@example.com>",
   "license": "MIT",
   "type": "module",
   "scripts": {

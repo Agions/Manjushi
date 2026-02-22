@@ -155,7 +155,7 @@ const Home = () => {
       >
         <div className={styles.heroContent}>
           <Title level={1} className={styles.title}>
-            漫剧师 <span className={styles.highlight}>AI漫剧创作</span>
+            InkMotion <span className={styles.highlight}>AI漫剧创作</span>
           </Title>
           <Paragraph className={styles.subtitle}>
             AI赋能的短视频创作工具，让视频制作更简单、更高效
@@ -467,7 +467,7 @@ const Home = () => {
       >
         <Title level={3}>准备好开始创作了吗？</Title>
         <Paragraph className={styles.ctaText}>
-          使用漫剧师，让AI为您的创作提供灵感和效率
+          使用InkMotion，让AI为您的创作提供灵感和效率
         </Paragraph>
         <Button 
           type="primary" 
@@ -484,7 +484,7 @@ const Home = () => {
       <div className={styles.footer}>
         <Divider />
         <Space split={<Divider type="vertical" />}>
-          <Text type="secondary">© 2025 漫剧师</Text>
+          <Text type="secondary">© 2025 InkMotion</Text>
           <Text type="secondary">基于 Tauri 和 React 构建</Text>
           <a href="https://github.com/agions/blazecut" target="_blank" rel="noopener noreferrer">
             GitHub

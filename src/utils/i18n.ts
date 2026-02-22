@@ -14,7 +14,7 @@ interface Translations {
 const translations: Translations = {
   zh: {
     // 通用
-    'app.name': '漫剧师',
+    'app.name': 'InkMotion',
     'app.save': '保存',
     'app.cancel': '取消',
     'app.confirm': '确认',
@@ -77,7 +77,7 @@ const translations: Translations = {
   },
   en: {
     // 通用
-    'app.name': 'Manjushi',
+    'app.name': 'InkMotion',
     'app.save': 'Save',
     'app.cancel': 'Cancel',
     'app.confirm': 'Confirm',

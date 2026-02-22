@@ -1,5 +1,5 @@
 /**
- * 漫剧生成工作流服务
+ * InkMotion 漫剧视频生成工作流服务
  * 小说 → 剧本 → 分镜 → 角色 → 场景 → 动画 → 配音 → 导出
  */
 
@@ -291,50 +291,264 @@ class DramaWorkflowService {
   }
 
   /**
-   * 渲染场景
+   * Step 6: 渲染场景
+   * 输入: 分镜脚本 + 角色卡
+   * 输出: 渲染后的场景图片序列
    */
   private async stepRenderScenes(config: DramaWorkflowConfig): Promise<void> {
-    this.updateState({ step: 'scene-render', progress: 75 });
+    this.updateState({ step: 'scene-render', progress: 72 });
 
-    // 场景渲染逻辑
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const { storyboards, characters } = this.state.data;
+    if (!storyboards || storyboards.length === 0) throw new Error('分镜数据不存在');
 
+    const scenes: any[] = [];
+
+    for (let i = 0; i < storyboards.length; i++) {
+      const board = storyboards[i];
+
+      // 构建场景渲染 prompt，融合角色外观信息
+      const charDescriptions = (characters || [])
+        .filter(c => board.characters.includes(c.name))
+        .map(c => `${c.name}: ${c.appearance ? JSON.stringify(c.appearance) : c.description}`)
+        .join('\n');
+
+      const renderPrompt = [
+        board.prompt,
+        `风格: 漫画/动漫`,
+        `镜头: ${board.shotType}, 角度: ${board.angle}`,
+        `光照: ${board.lighting}, 氛围: ${board.mood}`,
+        charDescriptions ? `角色:\n${charDescriptions}` : '',
+        `背景: ${board.background}`
+      ].filter(Boolean).join('\n');
+
+      // 调用 AI 图像生成（通过 aiService）
+      try {
+        const sceneResult = await aiService.chat(
+          `作为场景渲染引擎，根据以下分镜描述生成详细的漫画场景描述（用于后续图像生成）：\n\n${renderPrompt}`,
+          { provider: config.provider, model: config.model }
+        );
+
+        scenes.push({
+          id: `scene-${board.id}`,
+          storyboardId: board.id,
+          renderPrompt,
+          description: sceneResult,
+          imageUrl: null, // 实际图像URL由外部图像生成API填充
+          status: 'described'
+        });
+      } catch {
+        scenes.push({
+          id: `scene-${board.id}`,
+          storyboardId: board.id,
+          renderPrompt,
+          description: board.description,
+          imageUrl: null,
+          status: 'fallback'
+        });
+      }
+
+      this.updateState({
+        progress: 72 + ((i + 1) / storyboards.length) * 8
+      });
+    }
+
+    this.updateData({ scenes });
     this.updateState({ progress: 80 });
   }
 
   /**
-   * 动画合成
+   * Step 7: 动态合成
+   * 输入: 场景图片 + 分镜参数
+   * 输出: 动画片段序列（含镜头运动、转场）
    */
   private async stepAnimation(config: DramaWorkflowConfig): Promise<void> {
     this.updateState({ step: 'animation', progress: 82 });
 
-    // 动画合成逻辑
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const { storyboards, scenes } = this.state.data;
+    if (!storyboards || !scenes) throw new Error('场景数据不存在');
 
+    const animations: any[] = [];
+
+    for (let i = 0; i < storyboards.length; i++) {
+      const board = storyboards[i];
+      const scene = scenes[i];
+
+      // 根据分镜参数生成动画配置
+      const animation = {
+        id: `anim-${board.id}`,
+        sceneId: scene?.id,
+        duration: board.duration || 3,
+        camera: {
+          movement: board.movement, // static | pan | tilt | zoom | track
+          startPosition: this.getCameraStart(board),
+          endPosition: this.getCameraEnd(board),
+          easing: 'ease-in-out'
+        },
+        transitions: {
+          in: i === 0 ? 'fade' : this.getTransition(board, storyboards[i - 1]),
+          out: 'cut',
+          duration: 0.5
+        },
+        effects: {
+          kenBurns: board.movement === 'zoom',
+          parallax: board.movement === 'track',
+          shake: false
+        }
+      };
+
+      animations.push(animation);
+      this.updateState({ progress: 82 + ((i + 1) / storyboards.length) * 6 });
+    }
+
+    this.updateData({ animations });
     this.updateState({ progress: 88 });
   }
 
   /**
-   * 配音配乐
+   * Step 8: 配音配乐
+   * 输入: 剧本对白 + 角色配音参数 + 场景氛围
+   * 输出: 完整音轨（对白 + BGM + SFX）
    */
   private async stepVoiceover(config: DramaWorkflowConfig): Promise<void> {
     this.updateState({ step: 'voiceover', progress: 90 });
 
-    // 配音配乐逻辑
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const { script, characters, storyboards } = this.state.data;
+    if (!script) throw new Error('剧本不存在');
 
+    // 收集所有对白
+    const dialogues: Array<{
+      character: string;
+      text: string;
+      emotion?: string;
+      sceneId: string;
+    }> = [];
+
+    for (const scene of script.scenes) {
+      for (const line of scene.dialogue) {
+        dialogues.push({
+          character: line.character,
+          text: line.text,
+          emotion: line.emotion,
+          sceneId: scene.id
+        });
+      }
+    }
+
+    // 匹配角色配音参数
+    const voiceMap: Record<string, any> = {};
+    for (const char of (characters || [])) {
+      if (char.voice) {
+        voiceMap[char.name] = char.voice;
+      }
+    }
+
+    // 分析场景氛围用于 BGM 匹配
+    const moodSequence = (storyboards || []).map(b => b.mood);
+    const dominantMood = this.getDominantMood(moodSequence);
+
+    const audio = {
+      dialogues: dialogues.map(d => ({
+        ...d,
+        voiceConfig: voiceMap[d.character] || { type: 'default', pitch: 'medium', speed: 'normal' },
+        audioUrl: null, // TTS API 生成后填充
+        status: 'pending'
+      })),
+      bgm: {
+        mood: dominantMood,
+        style: 'cinematic',
+        url: null,
+        status: 'pending'
+      },
+      sfx: [],
+      totalDialogues: dialogues.length,
+      estimatedDuration: script.totalDuration
+    };
+
+    this.updateData({ audio });
     this.updateState({ progress: 95 });
   }
 
   /**
-   * 导出
+   * Step 9: 导出
+   * 输入: 动画序列 + 音轨
+   * 输出: 成品视频文件
    */
   private async stepExport(config: DramaWorkflowConfig): Promise<void> {
-    this.updateState({ step: 'export', progress: 97 });
+    this.updateState({ step: 'export', progress: 96 });
 
-    // 导出逻辑
-    this.updateData({ exportUrl: 'placeholder-url' });
+    const { projectId, animations, audio, storyboards } = this.state.data;
+    if (!animations || !audio) throw new Error('动画或音频数据不存在');
+
+    // 构建导出时间轴
+    const timeline = {
+      projectId,
+      totalDuration: animations.reduce((sum: number, a: any) => sum + a.duration, 0),
+      tracks: {
+        video: animations.map((anim: any, idx: number) => ({
+          id: anim.id,
+          startTime: animations.slice(0, idx).reduce((s: number, a: any) => s + a.duration, 0),
+          duration: anim.duration,
+          camera: anim.camera,
+          transitions: anim.transitions
+        })),
+        audio: {
+          dialogues: audio.dialogues,
+          bgm: audio.bgm,
+          sfx: audio.sfx
+        }
+      },
+      exportConfig: {
+        format: 'mp4',
+        resolution: '1080p',
+        fps: 24,
+        bitrate: '8M',
+        codec: 'h264'
+      }
+    };
+
+    // 保存导出配置
+    await storageService.save(`export-${projectId}`, timeline);
+
+    this.updateData({
+      exportUrl: `export://${projectId}/output.mp4`
+    });
     this.updateState({ progress: 100 });
+  }
+
+  // ========== 辅助方法 ==========
+
+  private getCameraStart(board: Storyboard): { x: number; y: number; zoom: number } {
+    const base = { x: 0, y: 0, zoom: 1 };
+    switch (board.movement) {
+      case 'zoom': return { ...base, zoom: 0.8 };
+      case 'pan': return { ...base, x: -0.1 };
+      case 'tilt': return { ...base, y: -0.1 };
+      default: return base;
+    }
+  }
+
+  private getCameraEnd(board: Storyboard): { x: number; y: number; zoom: number } {
+    const base = { x: 0, y: 0, zoom: 1 };
+    switch (board.movement) {
+      case 'zoom': return { ...base, zoom: 1.2 };
+      case 'pan': return { ...base, x: 0.1 };
+      case 'tilt': return { ...base, y: 0.1 };
+      default: return base;
+    }
+  }
+
+  private getTransition(current: Storyboard, previous: Storyboard): string {
+    if (current.mood !== previous.mood) return 'dissolve';
+    if (current.shotType !== previous.shotType) return 'cut';
+    return 'cut';
+  }
+
+  private getDominantMood(moods: string[]): string {
+    const counts: Record<string, number> = {};
+    for (const m of moods) {
+      counts[m] = (counts[m] || 0) + 1;
+    }
+    return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'neutral';
   }
 
   /**

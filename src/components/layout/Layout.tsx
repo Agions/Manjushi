@@ -194,7 +194,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           {!collapsed ? (
             <Space>
               <FireOutlined style={{ fontSize: '24px', color: '#FF5252' }} />
-              <Title level={4} style={{ margin: 0 }}>漫剧师</Title>
+              <Title level={4} style={{ margin: 0 }}>InkMotion</Title>
             </Space>
           ) : (
             <FireOutlined style={{ fontSize: '24px', color: '#FF5252' }} />
@@ -229,7 +229,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <AntLayout>
         <Header className={styles.header}>
           <div className={styles.headerTitle}>
-            {location.pathname === '/' && '欢迎使用漫剧师'}
+            {location.pathname === '/' && '欢迎使用InkMotion'}
             {location.pathname.startsWith('/project') && '项目管理'}
             {location.pathname.startsWith('/templates') && '模板中心'}
             {location.pathname.startsWith('/editor') && '视频剪辑工作台'}

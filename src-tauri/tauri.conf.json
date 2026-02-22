@@ -7,7 +7,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "漫剧师",
+    "productName": "InkMotion",
     "version": "0.1.0"
   },
   "tauri": {
@@ -52,7 +52,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.blazecut.dev",
+      "identifier": "com.inkmotion.app",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -78,7 +78,7 @@
     },
     "windows": [
       {
-        "title": "漫剧师 - AI漫剧创作平台",
+        "title": "InkMotion - AI 漫剧视频智能创作平台",
         "width": 1200,
         "height": 800,
         "minWidth": 800,

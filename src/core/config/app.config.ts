@@ -5,21 +5,22 @@
 
 // 应用信息
 export const APP_CONFIG = {
-  name: '漫剧师',
-  version: '1.0.0',
-  description: 'AI驱动的专业漫剧视频创作平台',
-  repository: 'https://github.com/Agions/manjushi',
+  name: 'InkMotion',
+  nameZh: '墨动',
+  version: '2.0.0',
+  description: 'AI-Powered Comic Drama Video Creation Platform',
+  repository: 'https://github.com/Agions/Manjushi',
   license: 'MIT'
 } as const;
 
 // 存储配置
 export const STORAGE_CONFIG = {
-  prefix: 'cineforge_',
+  prefix: 'inkmotion_',
   keys: {
-    store: 'cineforge-store',
-    settings: 'cineforge-settings',
-    projects: 'cineforge-projects',
-    cache: 'cineforge-cache'
+    store: 'inkmotion-store',
+    settings: 'inkmotion-settings',
+    projects: 'inkmotion-projects',
+    cache: 'inkmotion-cache'
   }
 } as const;
 

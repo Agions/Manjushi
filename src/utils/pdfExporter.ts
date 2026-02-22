@@ -22,8 +22,8 @@ export const exportScriptToPDF = (script: Script, projectName: string) => {
   const title = `${projectName} - 解说脚本`;
   doc.setProperties({
     title,
-    author: '漫剧师',
-    creator: '漫剧师 Script Generator',
+    author: 'InkMotion',
+    creator: 'InkMotion Script Generator',
     subject: '视频解说脚本',
   });
   
@@ -79,7 +79,7 @@ export const exportScriptToPDF = (script: Script, projectName: string) => {
     doc.setPage(i);
     doc.setFontSize(8);
     doc.text(
-      `漫剧师 - 第 ${i} 页，共 ${pageCount} 页`,
+      `InkMotion - 第 ${i} 页，共 ${pageCount} 页`,
       doc.internal.pageSize.getWidth() / 2,
       doc.internal.pageSize.getHeight() - 10,
       { align: 'center' }
