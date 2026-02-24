@@ -286,7 +286,7 @@ export const RENDER_SETTINGS: StepSetting[] = [
   }
 ];
 
-// 合成步骤配置
+// 合成步骤配置 (包含配音)
 export const ANIMATE_SETTINGS: StepSetting[] = [
   {
     key: 'animationType',
@@ -335,6 +335,64 @@ export const ANIMATE_SETTINGS: StepSetting[] = [
     label: '粒子效果',
     type: 'toggle',
     default: false
+  },
+  // 语音合成配置
+  {
+    key: 'ttsProvider',
+    label: '语音合成',
+    type: 'select',
+    options: [
+      { value: 'edge-tts', label: 'Edge TTS (微软)' },
+      { value: 'azure-tts', label: 'Azure TTS (微软)' },
+      { value: 'alibaba-tts', label: '阿里云 TTS' },
+      { value: 'baidu-tts', label: '百度 TTS' },
+      { value: 'tencent-tts', label: '腾讯云 TTS' },
+      { value: 'iflytek-tts', label: '讯飞 TTS' },
+    ],
+    default: 'edge-tts'
+  },
+  {
+    key: 'ttsVoice',
+    label: '配音音色',
+    type: 'select',
+    options: [
+      { value: 'zh-CN-XiaoxiaoNeural', label: '晓晓 (女声)' },
+      { value: 'zh-CN-YunxiNeural', label: '云希 (男声)' },
+      { value: 'zh-CN-YunyangNeural', label: '云扬 (男声)' },
+      { value: 'zh-CN-XiaoyiNeural', label: '小艺 (女声)' },
+      { value: 'zh-CN-XiaomengNeural', label: '小梦 (女声)' },
+    ],
+    default: 'zh-CN-XiaoxiaoNeural'
+  },
+  {
+    key: 'ttsSpeed',
+    label: '语速',
+    type: 'slider',
+    min: 0.5,
+    max: 2.0,
+    default: 1.0
+  },
+  {
+    key: 'ttsPitch',
+    label: '音调',
+    type: 'slider',
+    min: -2,
+    max: 2,
+    default: 0
+  },
+  {
+    key: 'addBackgroundMusic',
+    label: '添加背景音乐',
+    type: 'toggle',
+    default: true
+  },
+  {
+    key: 'bgmVolume',
+    label: 'BGM 音量',
+    type: 'slider',
+    min: 0,
+    max: 100,
+    default: 30
   }
 ];
 
