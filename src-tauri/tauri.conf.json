@@ -7,7 +7,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "MangaFlow",
+    "productName": "ToonAI",
     "version": "0.1.0"
   },
   "tauri": {
@@ -52,7 +52,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.mangaflow.app",
+      "identifier": "com.toonai.app",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -78,7 +78,7 @@
     },
     "windows": [
       {
-        "title": "MangaFlow - AI 漫剧视频智能创作平台",
+        "title": "ToonAI - AI 漫剧视频智能创作平台",
         "width": 1200,
         "height": 800,
         "minWidth": 800,
