@@ -122,7 +122,7 @@ const WorkflowPage: React.FC = () => {
   
   // 导入相关状态
   const [importType, setImportType] = useState<'novel' | 'script' | 'prompt'>('novel');
-  const [episodes, setEpisodes] = useState(1);
+  const [episodes, setEpisodes] = useState(12);
   const [novelContent, setNovelContent] = useState('');
   const [promptContent, setPromptContent] = useState('');
 
@@ -302,12 +302,12 @@ const WorkflowPage: React.FC = () => {
               <Text strong>📺 剧集总数: {episodes} 集</Text>
               <Slider 
                 min={1} 
-                max={50} 
+                max={200} 
                 value={episodes}
                 onChange={setEpisodes}
-                marks={{ 1: '1', 10: '10', 20: '20', 30: '30', 50: '50' }}
+                marks={{ 1: '1', 50: '50', 100: '100', 150: '150', 200: '200' }}
               />
-              <Text type="secondary">
+              <Text type="secondary}>
                 AI 将根据导入内容生成 {episodes} 集剧本
               </Text>
             </div>
