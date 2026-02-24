@@ -121,6 +121,9 @@ npm run tauri build
 | Seedream | 5.0 (字节) |
 | 可灵 | 1.6 (快手) |
 | Vidu | 2.0 (生数) |
+| Flux | Pro |
+| Ideogram | 3.0 |
+| Recraft | V3 |
 | OpenAI | DALL-E 3 |
 | Midjourney | V6 |
 
