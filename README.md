@@ -1,174 +1,175 @@
+# ManGaAI - AI 漫剧视频智能创作平台
+
+基于 Tauri + React + TypeScript 的 AI 漫剧创作工具，支持国产 AI 模型，实现从剧本到成品的全流程自动化。
+
+## 功能特性
+
+### 🤖 AI 对话（6 个国产模型）
+
+| 厂商 | 模型 | 状态 |
+|------|------|------|
+| 百度 | ERNIE 5.0 | ✅ |
+| 阿里 | Qwen 3.5 | ✅ |
+| 智谱 | GLM-5 | ✅ |
+| 月之暗面 | Kimi k2.5 | ✅ |
+| MiniMax | M2.5 | ✅ |
+| 字节 | 豆包 Pro | ✅ |
+
+### 🔊 TTS 语音合成（4 引擎 60+ 音色）
+
+| 引擎 | 音色数 | 特点 |
+|------|--------|------|
+| Edge TTS | 25+ | 免费，含方言 |
+| 阿里云 | 20+ | 需 API Key |
+| 百度 | 11 | 需 API Key |
+| 讯飞 | 5 | 需 App ID |
+
+### 🎨 图像生成
+
+- **字节 Seedream 2.0** - 高质量图像，10 种风格
+- **快手可灵 1.6** - 国产领先模型
+
+### 🎬 视频生成
+
+- **字节 Seedance 2.0** - 5-10 秒视频
+- **快手可灵 1.6** - 图生视频
+- **生数 Vidu 2.0** - 高保真视频
+
+### 🎞️ FFmpeg 视频处理
+
+- 视频分析（时长、分辨率、FPS、编码）
+- 提取关键帧、生成缩略图
+- 视频剪辑（多片段合并）
+- 转场效果（淡入淡出、溶解、擦除、滑动）
+- 字幕添加（SRT 格式）
+- 音量调节、质量选择、格式转换
+
+### ⚡ 9 步漫剧工作流
+
+1. **剧本创作** - AI 生成剧本
+2. **分镜设计** - 剧本转分镜脚本
+3. **角色设定** - 提取角色信息
+4. **场景生成** - 提取场景信息
+5. **图像生成** - 批量生成图像
+6. **智能配音** - 生成角色配音
+7. **视频生成** - 图生视频
+8. **后期剪辑** - 片段管理
+9. **导出成品** - 输出最终视频
+
+## 技术栈
+
+- **前端**: React 18 + TypeScript 5 + Vite
+- **UI**: Ant Design 5 + Framer Motion
+- **状态**: Zustand
+- **后端**: Tauri (Rust)
+- **视频处理**: FFmpeg
+
+## 项目结构
+
 ```
-   __  __         _          ____ ___ _____
-  |  \/  |__   __| |__  _   / ___|_ _|_   _|
-  | |\/| '_ \ / _` '_ \| | |  \___ \| | | | |
-  | |  | | | | (_| | | | |_| |___) | | |_| |
-  |_|  |_| |_|\__,_| |_|\___/|____/|___|\__, |
-                                        |___/
+ManGaAI/
+├── src/
+│   ├── core/
+│   │   ├── constants/         # 常量配置
+│   │   ├── services/          # 核心服务
+│   │   │   ├── ai.service.ts
+│   │   │   ├── tts.service.ts
+│   │   │   ├── generation.service.ts
+│   │   │   ├── ffmpeg.service.ts
+│   │   │   └── workflow.service.ts
+│   │   └── types/             # 类型定义
+│   ├── components/
+│   │   ├── business/          # 业务组件
+│   │   │   ├── AIImageGenerator/
+│   │   │   ├── FFmpegStatus/
+│   │   │   └── WorkflowManager/
+│   │   └── layout/            # 布局组件
+│   ├── pages/                 # 页面
+│   └── App.tsx
+├── src-tauri/
+│   └── src/
+│       └── main.rs            # Rust 后端
+└── package.json
 ```
 
-<p align="center">
-  <strong>ManGa AI — AI 漫剧视频智能创作平台</strong>
-</p>
+## 快速开始
 
-<p align="center">
-  <img src="https://img.shields.io/badge/version-2.1.0-blue.svg" alt="Version" />
-  <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License" />
-  <img src="https://img.shields.io/badge/React-18-61dafb?logo=react" alt="React" />
-  <img src="https://img.shields.io/badge/Tauri-ffc131?logo=tauri" alt="Tauri" />
-  <img src="https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript" alt="TypeScript" />
-</p>
-
----
-
-## 📖 简介
-
-**ManGa AI** 是一款专业的 AI 漫剧视频智能创作平台，将小说/剧本自动转化为高质量动态漫剧视频。
-
-> 🎬 将文字变成画面，让故事动起来
-
----
-
-## ✨ 核心功能
-
-- 📥 **多形式导入** - 支持小说/剧本/AI提示词
-- 🤖 **多模型 AI** - GPT-4 / Claude / 通义千问 / 文心一言
-- 👤 **角色一致性** - 全剧角色形象统一
-- 🎬 **智能分镜** - 自动生成漫画分镜
-- 🎤 **语音合成** - Edge TTS / 阿里云 / 百度等多平台
-- 💰 **成本控制** - 实时 API 消耗统计
-
----
-
-## 🔄 7 步工作流
-
-```
-导入 → 生成 → 分镜 → 角色 → 渲染 → 合成 → 导出
-```
-
-| 步骤 | 功能 | 关键配置 |
-|------|------|----------|
-| 📥 导入 | 小说/剧本/提示词 | 编码检测、智能分章 |
-| 🤖 生成 | AI 剧本生成 | 模型选择、集数(1-200) |
-| 🎬 分镜 | 智能分镜设计 | 比例(9:16/16:9)、分辨率 |
-| 👤 角色 | 角色形象设计 | 风格(日/美/国漫)、一致性 |
-| 🎨 渲染 | 场景渲染 | 引擎、光照、色调 |
-| ✨ 合成 | 动态合成 | 动画、TTS、音效、BGM |
-| 📤 导出 | 视频导出 | 格式(MP4/WebM)、质量 |
-
----
-
-## 🛠️ 技术栈
-
-| 类别 | 技术 |
-|------|------|
-| 前端 | React 18 + TypeScript 5 + Vite |
-| UI | Ant Design 5 |
-| 状态 | Zustand |
-| 动画 | Framer Motion |
-| 桌面 | Tauri (Rust) |
-
----
-
-## 🚀 快速开始
+### 安装依赖
 
 ```bash
-# 克隆项目
-git clone https://github.com/Agions/ManGaAI.git
-cd ManGaAI
-
-# 安装依赖
 npm install
+```
 
-# 开发模式
+### 开发模式
+
+```bash
 npm run dev
+```
 
-# 构建桌面端
+### 构建
+
+```bash
+npm run build
+```
+
+### Tauri 构建
+
+```bash
 npm run tauri build
 ```
 
----
+## 环境要求
 
-## 🎤 语音合成
+- Node.js 18+
+- Rust 1.70+
+- FFmpeg（视频处理功能需要）
 
-| 提供商 | 特点 |
-|--------|------|
-| Edge TTS | 免费、音色多 |
-| Azure TTS | 高质量 |
-| 阿里云 TTS | 中文优势 |
-| 百度 TTS | 中文优势 |
+## 安装 FFmpeg
 
----
-
-## 🤖 AI 模型支持 (全部国产)
-
-### 文本生成
-
-| 厂商 | 模型 |
-|------|------|
-| 智谱 | GLM-5 |
-| MiniMax | M2.5 |
-| 月之暗面 | Kimi K2.5 |
-| 字节 | 豆包 2.0 |
-| 阿里 | Qwen 2.5 |
-| 百度 | ERNIE 4.0 |
-
-### 图像生成
-
-| 厂商 | 模型 |
-|------|------|
-| 字节 | Seedream 5.0 |
-| 快手 | 可灵 1.6 |
-| 生数 | Vidu 2.0 |
-
-### 视频生成
-
-| 厂商 | 模型 |
-|------|------|
-| 字节 | Seedance 2.0 |
-| 快手 | 可灵 1.6 |
-| 生数 | Vidu 2.0 |
-
-### 语音合成
-
-| 厂商 | 特点 |
-|------|------|
-| Edge TTS | 免费、音色多 |
-| 阿里云 TTS | 中文优势 |
-| 百度 TTS | 中文优势 |
-| 讯飞 TTS | 多语言支持 |
-
----
-
-## 📁 项目结构
-
-```
-src/
-├── core/              # 核心服务
-│   ├── config/        # 配置
-│   ├── services/      # 业务服务
-│   └── stores/        # 状态管理
-├── components/        # UI 组件
-├── pages/            # 页面
-│   ├── Workflow/      # 工作流
-│   └── Settings/      # 设置
-src-tauri/            # Tauri 桌面端
+### Windows
+```powershell
+winget install Gyan.FFmpeg
 ```
 
----
+### macOS
+```bash
+brew install ffmpeg
+```
 
-## 📄 许可证
+### Linux
+```bash
+# Ubuntu/Debian
+sudo apt install ffmpeg
+
+# CentOS/RHEL
+sudo yum install ffmpeg
+```
+
+## 配置说明
+
+在设置页面配置以下 API Key：
+
+- **AI 模型**: 百度/阿里/智谱/Kimi/MiniMax/豆包
+- **图像生成**: 字节 Seedream / 快手可灵
+- **视频生成**: 字节 Seedance / 快手可灵 / 生数 Vidu
+- **TTS**: 阿里云 / 百度 / 讯飞（可选，Edge TTS 免费）
+
+## 使用流程
+
+1. 进入「漫剧工作流」页面
+2. 创建新项目，配置 AI 模型和 API Key
+3. 点击「开始创作」，等待 9 步工作流自动执行
+4. 或单独使用「图像/视频生成」功能
+5. 在「视频剪辑」页面进行后期处理
+6. 导出最终视频
+
+## 许可证
 
 MIT License
 
----
+## 致谢
 
-## 🤝 参与贡献
-
-欢迎提交 Pull Request！
-
----
-
-<p align="center">
-  <strong>ManGa AI</strong> — 让每一帧都有灵魂
-</p>
+- [Tauri](https://tauri.app/)
+- [React](https://react.dev/)
+- [Ant Design](https://ant.design/)
+- [FFmpeg](https://ffmpeg.org/)
