@@ -17,6 +17,7 @@ export { originalityService, OriginalityService } from './originality.service';
 export { dramaTemplateService, DramaTemplateService } from './drama-template.service';
 export { ttsService, TTSService } from './tts.service';
 export { generationService, GenerationService } from './generation.service';
+export { ffmpegService, FFmpegService } from './ffmpeg.service';
 
 // 工作流增强
 export {
@@ -54,3 +55,11 @@ export type {
   GenerationTask,
   GenerationResult 
 } from './generation.service';
+export type {
+  VideoMetadata,
+  VideoSegment,
+  CutVideoParams,
+  PreviewParams,
+  CutProgressCallback,
+  FFmpegStatus,
+} from './ffmpeg.service';

@@ -1,0 +1,63 @@
+.card {
+  margin-bottom: 16px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px;
+}
+
+.installed {
+  .details {
+    margin-top: 16px;
+  }
+
+  .features {
+    margin-top: 16px;
+
+    h5 {
+      margin-bottom: 12px;
+    }
+  }
+}
+
+.notInstalled {
+  .installGuide {
+    margin: 16px 0;
+    padding: 16px;
+    background-color: #f6ffed;
+    border-radius: 8px;
+    border: 1px solid #b7eb8f;
+
+    h5 {
+      margin-bottom: 16px;
+    }
+
+    .installMethod {
+      margin-bottom: 16px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .codeBlock {
+        margin-top: 8px;
+        padding: 12px;
+        background-color: #1e1e1e;
+        border-radius: 4px;
+        overflow-x: auto;
+
+        code {
+          color: #d4d4d4;
+          font-family: 'Consolas', 'Monaco', monospace;
+          font-size: 13px;
+          white-space: pre-wrap;
+          word-break: break-all;
+        }
+      }
+    }
+  }
+}
