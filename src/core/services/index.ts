@@ -15,6 +15,7 @@ export { lipSyncService, LipSyncService } from './lip-sync.service';
 export { enhancedDramaWorkflowService, EnhancedDramaWorkflowService } from './enhanced-drama-workflow.service';
 export { originalityService, OriginalityService } from './originality.service';
 export { dramaTemplateService, DramaTemplateService } from './drama-template.service';
+export { ttsService, TTSService } from './tts.service';
 
 // 工作流增强
 export {
@@ -42,3 +43,4 @@ export type { DramaWorkflowStep, DramaWorkflowState, DramaWorkflowData, DramaWor
 export type { CostRecord, CostStats, CostBudget } from './cost.service';
 export type { Character, DramaStyle, ConsistencyRule, ConsistencyCheckpoint, ConsistencyIssue, CharacterLibrary } from './consistency.service';
 export type { NovelChapter, ScriptScene, Script, NovelParseResult, Storyboard } from './novel.service';
+export type { TTSProvider, TTSConfig, TTSOptions, TTSResult } from './tts.service';
