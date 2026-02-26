@@ -1,0 +1,98 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.generatorCard {
+  .tabs {
+    margin-bottom: 16px;
+  }
+
+  .formSection {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .formItem {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .sliderHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  .progressSection {
+    margin-top: 8px;
+    padding: 16px;
+    background-color: #f6ffed;
+    border-radius: 8px;
+    border: 1px solid #b7eb8f;
+  }
+}
+
+.previewCard {
+  .previewContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    img,
+    video {
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .previewActions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+}
+
+.historyCard {
+  .taskResult {
+    margin-top: 8px;
+
+    img,
+    video {
+      border-radius: 4px;
+      border: 1px solid #d9d9d9;
+    }
+  }
+}
+
+// 响应式布局
+@media (max-width: 768px) {
+  .container {
+    padding: 8px;
+  }
+
+  .generatorCard {
+    .formItem {
+      :global {
+        .ant-radio-group {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        .ant-radio-button-wrapper {
+          flex: 1;
+          min-width: 80px;
+          text-align: center;
+        }
+      }
+    }
+  }
+}

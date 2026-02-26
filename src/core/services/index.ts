@@ -16,6 +16,7 @@ export { enhancedDramaWorkflowService, EnhancedDramaWorkflowService } from './en
 export { originalityService, OriginalityService } from './originality.service';
 export { dramaTemplateService, DramaTemplateService } from './drama-template.service';
 export { ttsService, TTSService } from './tts.service';
+export { generationService, GenerationService } from './generation.service';
 
 // 工作流增强
 export {
@@ -44,3 +45,12 @@ export type { CostRecord, CostStats, CostBudget } from './cost.service';
 export type { Character, DramaStyle, ConsistencyRule, ConsistencyCheckpoint, ConsistencyIssue, CharacterLibrary } from './consistency.service';
 export type { NovelChapter, ScriptScene, Script, NovelParseResult, Storyboard } from './novel.service';
 export type { TTSProvider, TTSConfig, TTSOptions, TTSResult } from './tts.service';
+export type { 
+  GenerationType, 
+  GenerationProvider, 
+  GenerationConfig, 
+  ImageGenerationOptions, 
+  VideoGenerationOptions,
+  GenerationTask,
+  GenerationResult 
+} from './generation.service';
