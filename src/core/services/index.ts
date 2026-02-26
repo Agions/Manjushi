@@ -82,6 +82,22 @@ export type {
   CutProgressCallback,
   FFmpegStatus,
 } from './ffmpeg.service';
+
+// 设置服务
+export {
+  settingsService,
+  SettingsService,
+  DEFAULT_SETTINGS,
+} from './settings.service';
+export type {
+  AppSettings,
+  GeneralSettings,
+  AISettings,
+  VideoSettings,
+  NotificationSettings,
+  ShortcutSettings,
+  AdvancedSettings,
+} from './settings.service';
 export type {
   WorkflowStepType,
   WorkflowStep,
