@@ -1,0 +1,56 @@
+.container {
+  padding: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.steps {
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.currentStep {
+  margin-bottom: 16px;
+  background-color: #e6f7ff;
+  border: 1px solid #91d5ff;
+}
+
+.stepList {
+  margin-bottom: 16px;
+}
+
+.eventLog {
+  .logContent {
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #1e1e1e;
+    padding: 12px;
+    border-radius: 4px;
+
+    .logLine {
+      padding: 2px 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+      
+      span {
+        color: #d4d4d4;
+      }
+    }
+  }
+}
+
+// 响应式布局
+@media (max-width: 768px) {
+  .container {
+    padding: 8px;
+  }
+
+  .steps {
+    :global {
+      .ant-steps-item-title {
+        font-size: 12px;
+      }
+    }
+  }
+}

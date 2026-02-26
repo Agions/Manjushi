@@ -18,6 +18,7 @@ export { dramaTemplateService, DramaTemplateService } from './drama-template.ser
 export { ttsService, TTSService } from './tts.service';
 export { generationService, GenerationService } from './generation.service';
 export { ffmpegService, FFmpegService } from './ffmpeg.service';
+export { workflowService, WorkflowService } from './workflow.service';
 
 // 工作流增强
 export {
@@ -63,3 +64,14 @@ export type {
   CutProgressCallback,
   FFmpegStatus,
 } from './ffmpeg.service';
+export type {
+  WorkflowStepType,
+  WorkflowStep,
+  WorkflowConfig,
+  ComicDramaProject,
+  StoryboardItem,
+  Character,
+  Scene,
+  WorkflowEvent,
+  WorkflowEventHandler,
+} from './workflow.service';
