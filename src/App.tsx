@@ -3,6 +3,7 @@ import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom';
 import { message, notification } from 'antd';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
+import Workflow from './pages/Workflow';
 import ProjectEdit from './pages/ProjectEdit';
 import ProjectDetail from './pages/ProjectDetail';
 import ScriptDetail from './pages/ScriptDetail';
@@ -87,6 +88,9 @@ const App: React.FC = () => {
           <Routes>
             {/* 首页 */}
             <Route path="/" element={<Home />} />
+            
+            {/* 工作流页面 */}
+            <Route path="/workflow" element={<Workflow />} />
             
             {/* 项目页面 */}
             <Route path="/project/new" element={<ProjectEdit />} />

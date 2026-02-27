@@ -42,7 +42,9 @@ import {
 } from '@ant-design/icons';
 
 import { WORKFLOW_CONFIGS } from '@/core/config/workflow-config';
-import { WORKFLOW_CONFIGS } from '@/core/config/workflow-config';
+import { dramaWorkflowService } from '@/core/services';
+import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import styles from './index.module.less';
 
 const { Title, Text, Paragraph } = Typography;
@@ -176,6 +178,7 @@ const MODELS = [
 ];
 
 const WorkflowPage: React.FC = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [projectName, setProjectName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('');
@@ -231,17 +234,36 @@ const WorkflowPage: React.FC = () => {
     },
   ];
 
-  const handleStart = () => {
-    console.log('开始工作流:', { 
-      projectName, 
-      selectedTemplate, 
-      selectedModel, 
-      chapters: episodes,
-      importType,
-      workflowConfig,
-      novelContent: importType === 'novel' ? novelContent : null,
-      promptContent: importType === 'prompt' ? promptContent : null
-    });
+  const handleStart = async () => {
+    // 生成项目ID
+    const projectId = uuidv4();
+    
+    // 获取内容（小说内容或提示词）
+    const content = importType === 'novel' || importType === 'script' 
+      ? novelContent 
+      : promptContent;
+    
+    // 构建工作流配置
+    const config = {
+      autoParse: true,
+      autoGenerateScript: true,
+      autoGenerateStoryboard: true,
+      chaptersToUse: chapters,
+      scenesPerChapter: workflowConfig.generate.episodesPerChapter || 2,
+      panelsPerScene: workflowConfig.storyboard.framesPerScene || 3,
+      provider: 'openai',
+      model: selectedModel
+    };
+    
+    try {
+      // 调用工作流服务
+      await dramaWorkflowService.start(projectId, content, config);
+      
+      // 跳转到项目页
+      navigate(`/project/${projectId}`);
+    } catch (error) {
+      console.error('工作流启动失败:', error);
+    }
   };
 
   return (
