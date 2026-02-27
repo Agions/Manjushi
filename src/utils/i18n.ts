@@ -1,4 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
+import {
+  DEFAULT_LANGUAGE,
+  LANGUAGE_STORAGE_KEY,
+  getBrowserLanguage,
+  getInitialLanguage
+} from '../core/config/language.config';
 
 // 语言类型
 export type Language = 'zh' | 'en';
@@ -140,15 +146,6 @@ const translations: Translations = {
   }
 };
 
-// 获取浏览器语言
-const getBrowserLanguage = (): Language => {
-  const navigatorLang = navigator.language.toLowerCase();
-  return navigatorLang.startsWith('zh') ? 'zh' : 'en';
-};
-
-// 默认语言
-const defaultLanguage = getBrowserLanguage();
-
 // 语言相关的日期格式化选项
 const dateFormatOptions: Record<Language, Intl.DateTimeFormatOptions> = {
   zh: {
@@ -188,11 +185,11 @@ const fileSizeUnits = {
 // 创建自定义的useTranslation钩子
 export function useTranslation() {
   const [language, setLanguage] = useState<Language>(
-    localStorage.getItem('app_language') as Language || defaultLanguage
+    localStorage.getItem(LANGUAGE_STORAGE_KEY) as Language || getInitialLanguage()
   );
   
   useEffect(() => {
-    localStorage.setItem('app_language', language);
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
   }, [language]);
   
   // 翻译函数
