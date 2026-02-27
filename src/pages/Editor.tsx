@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   Layout, 
   Button, 
@@ -41,6 +41,9 @@ import Preview from '../components/business/editor/Preview';
 import AssetPanel from '../components/business/editor/AssetPanel';
 import AIAssistant from '../components/business/editor/AIAssistant';
 
+// 导入键盘快捷键 Hook
+import { useKeyboardShortcuts, KeyboardShortcut } from '../hooks/useKeyboardShortcuts';
+
 const { Header, Sider, Content } = Layout;
 
 interface EditorProps {}
@@ -56,6 +59,66 @@ const Editor: React.FC<EditorProps> = () => {
   const [showAIPanel, setShowAIPanel] = useState(false);
   const [project, setProject] = useState<any>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+  
+  // 撤销/重做状态
+  const [history, setHistory] = useState<{ past: any[]; present: any; future: any[] }>({
+    past: [],
+    present: null,
+    future: [],
+  });
+  const canUndo = history.past.length > 0;
+  const canRedo = history.future.length > 0;
+
+  // 撤销操作
+  const handleUndo = useCallback(() => {
+    if (canUndo) {
+      const newPast = [...history.past];
+      const previous = newPast.pop()!;
+      setHistory({
+        past: newPast,
+        present: previous,
+        future: [history.present, ...history.future],
+      });
+      message.info('已撤销');
+    }
+  }, [history, canUndo]);
+
+  // 重做操作
+  const handleRedo = useCallback(() => {
+    if (canRedo) {
+      const newFuture = [...history.future];
+      const next = newFuture.shift()!;
+      setHistory({
+        past: [...history.past, history.present],
+        present: next,
+        future: newFuture,
+      });
+      message.info('已重做');
+    }
+  }, [history, canRedo]);
+
+  // 保存项目
+  const saveProject = useCallback(() => {
+    message.success('项目已保存 (Ctrl+S)');
+  }, []);
+
+  // 发布/导出
+  const handlePublish = useCallback(() => {
+    message.info('开始导出... (Ctrl+Enter)');
+  }, []);
+
+  // 定义键盘快捷键
+  const shortcuts: KeyboardShortcut[] = [
+    { key: 's', ctrl: true, handler: saveProject, description: '保存 (Ctrl+S)' },
+    { key: 'z', ctrl: true, handler: handleUndo, description: '撤销 (Ctrl+Z)' },
+    { key: 'z', ctrl: true, shift: true, handler: handleRedo, description: '重做 (Ctrl+Shift+Z)' },
+    { key: 'y', ctrl: true, handler: handleRedo, description: '重做 (Ctrl+Y)' },
+    { key: 'Enter', ctrl: true, handler: handlePublish, description: '发布/导出 (Ctrl+Enter)' },
+    { key: ' ', ctrl: false, handler: () => setPlaying(p => !p), description: '播放/暂停 (空格键)' },
+  ];
+
+  // 启用键盘快捷键
+  useKeyboardShortcuts(shortcuts);
 
   // 模拟加载项目数据
   useEffect(() => {
@@ -100,11 +163,6 @@ const Editor: React.FC<EditorProps> = () => {
   // 返回仪表盘
   const goBack = () => {
     navigate('/');
-  };
-
-  // 保存项目
-  const saveProject = () => {
-    message.success('项目已保存');
   };
 
   // 导出项目菜单

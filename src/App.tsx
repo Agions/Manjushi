@@ -2,6 +2,7 @@ import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom';
 import { message, notification, Spin } from 'antd';
 import Layout from './components/layout/Layout';
+import ErrorBoundary from './ErrorBoundary';
 import './App.css';
 
 // 懒加载页面组件
@@ -97,43 +98,45 @@ const App: React.FC = () => {
   }, [ffmpegReady, checking]);
 
   return (
-    <AppProvider>
-      <BrowserRouter>
-        <Layout>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-            {/* 首页 */}
-            <Route path="/" element={<Home />} />
-            
-            {/* 工作流页面 */}
-            <Route path="/workflow" element={<Workflow />} />
-            
-            {/* 项目页面 */}
-            <Route path="/project/new" element={<ProjectEdit />} />
-            <Route path="/project/edit/:projectId" element={<ProjectEdit />} />
-            <Route path="/project/:projectId" element={<ProjectDetail />} />
-            
-            {/* 视频编辑工作台 */}
-            <Route path="/editor" element={<VideoEditor />} />
-            <Route path="/editor/:projectId" element={<VideoEditor />} />
-            
-            {/* 脚本页面 */}
-            <Route path="/scripts" element={<Home />} />
-            <Route path="/script/:scriptId" element={<ScriptDetail />} />
-            
-            {/* 模板页面 */}
-            <Route path="/templates" element={<Home />} />
-            
-            {/* 设置页面 */}
-            <Route path="/settings" element={<Settings />} />
-            
-            {/* 重定向 */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-          </Suspense>
-        </Layout>
-      </BrowserRouter>
-    </AppProvider>
+    <ErrorBoundary>
+      <AppProvider>
+        <BrowserRouter>
+          <Layout>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+              {/* 首页 */}
+              <Route path="/" element={<Home />} />
+              
+              {/* 工作流页面 */}
+              <Route path="/workflow" element={<Workflow />} />
+              
+              {/* 项目页面 */}
+              <Route path="/project/new" element={<ProjectEdit />} />
+              <Route path="/project/edit/:projectId" element={<ProjectEdit />} />
+              <Route path="/project/:projectId" element={<ProjectDetail />} />
+              
+              {/* 视频编辑工作台 */}
+              <Route path="/editor" element={<VideoEditor />} />
+              <Route path="/editor/:projectId" element={<VideoEditor />} />
+              
+              {/* 脚本页面 */}
+              <Route path="/scripts" element={<Home />} />
+              <Route path="/script/:scriptId" element={<ScriptDetail />} />
+              
+              {/* 模板页面 */}
+              <Route path="/templates" element={<Home />} />
+              
+              {/* 设置页面 */}
+              <Route path="/settings" element={<Settings />} />
+              
+              {/* 重定向 */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+            </Suspense>
+          </Layout>
+        </BrowserRouter>
+      </AppProvider>
+    </ErrorBoundary>
   );
 };
 
