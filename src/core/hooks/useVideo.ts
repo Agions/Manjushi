@@ -7,7 +7,7 @@ import { useState, useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import type { VideoInfo, VideoAnalysis, TaskStatus } from '@/core/types';
 
-interface UseVideoReturn {
+export interface UseVideoReturn {
   // 视频信息
   video: VideoInfo | null;
   analysis: VideoAnalysis | null;

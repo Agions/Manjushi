@@ -77,6 +77,30 @@ export const MODEL_PROVIDERS: Record<ModelProvider, {
     apiDocs: 'https://cloud.tencent.com/document/product/1729',
     keyFormat: 'SecretId:SecretKey',
     keyPlaceholder: '请输入 SecretId 和 SecretKey'
+  },
+  minimax: {
+    name: 'MiniMax',
+    icon: 'https://www.minimax.io/favicon.ico',
+    website: 'https://www.minimax.io',
+    apiDocs: 'https://platform.minimax.io',
+    keyFormat: 'api-key',
+    keyPlaceholder: 'xxxxxxxxxxxxxxxx'
+  },
+  moonshot: {
+    name: '月之暗面',
+    icon: 'https://www.moonshot.cn/favicon.ico',
+    website: 'https://www.moonshot.cn',
+    apiDocs: 'https://platform.moonshot.cn',
+    keyFormat: 'api-key',
+    keyPlaceholder: 'xxxxxxxxxxxxxxxx'
+  },
+  bytedance: {
+    name: '字节跳动',
+    icon: 'https://www.bytedance.com/favicon.ico',
+    website: 'https://www.bytedance.com',
+    apiDocs: 'https://www.volcengine.com/docs/6792',
+    keyFormat: 'api-key',
+    keyPlaceholder: 'xxxxxxxxxxxxxxxx'
   }
 };
 
@@ -247,15 +271,152 @@ export const AI_MODELS: AIModel[] = [
     tokenLimit: 32000,
     contextWindow: 32000,
     pricing: { input: 0.003, output: 0.009, unit: '1K tokens' }
+  },
+  // ===== 2026 年新模型 =====
+  // MiniMax 模型
+  {
+    id: 'minimax-m2.5',
+    name: 'MiniMax M2.5',
+    provider: 'minimax',
+    category: ['text', 'code'],
+    description: 'MiniMax M2.5 大模型，2026年2月发布，支持超长上下文',
+    features: ['超长上下文', '中文优化', '高性价比'],
+    tokenLimit: 100000,
+    contextWindow: 100000,
+    pricing: { input: 0.01, output: 0.03, unit: '1K tokens' }
+  },
+  // 月之暗面模型
+  {
+    id: 'kimi-k2.5',
+    name: 'Kimi K2.5',
+    provider: 'moonshot',
+    category: ['text', 'code', 'image'],
+    description: '月之暗面 Kimi K2.5，2026年发布，支持多模态理解',
+    features: ['多模态理解', '长上下文', '代码生成'],
+    tokenLimit: 200000,
+    contextWindow: 200000,
+    pricing: { input: 0.012, output: 0.036, unit: '1K tokens' }
+  },
+  // 字节豆包模型
+  {
+    id: 'doubao-2.0',
+    name: '豆包 2.0',
+    provider: 'bytedance',
+    category: ['text', 'code', 'image'],
+    description: '字节跳动豆包 2.0，2026年发布，高性能多模态模型',
+    features: ['多模态', '快速响应', '中文优化'],
+    tokenLimit: 128000,
+    contextWindow: 128000,
+    pricing: { input: 0.005, output: 0.015, unit: '1K tokens' }
+  },
+  // 阿里 Qwen 2.5
+  {
+    id: 'qwen-2.5',
+    name: 'Qwen 2.5',
+    provider: 'alibaba',
+    category: ['text', 'code', 'image'],
+    description: '阿里通义千问 2.5，2026年发布，全面升级',
+    features: ['多模态', '长上下文', '代码生成'],
+    tokenLimit: 32000,
+    contextWindow: 32000,
+    pricing: { input: 0.006, output: 0.018, unit: '1K tokens' }
+  },
+  // 百度 ERNIE 4.0 (2026)
+  {
+    id: 'ernie-5.0',
+    name: 'ERNIE 5.0',
+    provider: 'baidu',
+    category: ['text', 'code', 'image'],
+    description: '百度 ERNIE 5.0，2026年发布，全面升级',
+    features: ['中文优化', '知识图谱', '多模态'],
+    tokenLimit: 128000,
+    contextWindow: 128000,
+    pricing: { input: 0.008, output: 0.024, unit: '1K tokens' }
+  },
+  // 智谱 GLM-5
+  {
+    id: 'glm-5',
+    name: 'GLM-5',
+    provider: 'zhipu',
+    category: ['text', 'code', 'image'],
+    description: '智谱 GLM-5，2026年2月发布，全面升级',
+    features: ['中文理解', '代码生成', '多模态'],
+    tokenLimit: 128000,
+    contextWindow: 128000,
+    pricing: { input: 0.005, output: 0.015, unit: '1K tokens' }
+  },
+  // 字节图像生成 - Seedream 5.0
+  {
+    id: 'seedream-5.0',
+    name: 'Seedream 5.0',
+    provider: 'bytedance',
+    category: ['image'],
+    description: '字节 Seedream 5.0，2026年2月10日发布，2K直出,4K AI增强,控制笔刷',
+    features: ['2K直出', '4K AI增强', '控制笔刷', '图像生成'],
+    tokenLimit: 4096,
+    contextWindow: 4096,
+    pricing: { input: 0.01, output: 0.05, unit: '1K tokens' }
+  },
+  // 快手可灵
+  {
+    id: 'kling-1.6',
+    name: '可灵 1.6',
+    provider: 'bytedance',
+    category: ['image', 'video'],
+    description: '快手可灵 1.6，2026年发布，图像+视频生成',
+    features: ['图像生成', '视频生成', 'AI增强'],
+    tokenLimit: 4096,
+    contextWindow: 4096,
+    pricing: { input: 0.02, output: 0.1, unit: '1K tokens' }
+  },
+  // 生数 Vidu
+  {
+    id: 'vidu-2.0',
+    name: 'Vidu 2.0',
+    provider: 'bytedance',
+    category: ['image', 'video'],
+    description: '生数 Vidu 2.0，2026年发布，图像+视频生成',
+    features: ['图像生成', '视频生成', 'AI增强'],
+    tokenLimit: 4096,
+    contextWindow: 4096,
+    pricing: { input: 0.015, output: 0.08, unit: '1K tokens' }
+  },
+  // 字节 Seedance 2.0
+  {
+    id: 'seedance-2.0',
+    name: 'Seedance 2.0',
+    provider: 'bytedance',
+    category: ['video'],
+    description: '字节 Seedance 2.0，2026年2月12日发布，文本/图片/视频输入,镜头保持一致',
+    features: ['文本生成视频', '图片生成视频', '视频生成视频', '镜头一致性'],
+    tokenLimit: 4096,
+    contextWindow: 4096,
+    pricing: { input: 0.05, output: 0.2, unit: '1K tokens' }
   }
 ];
 
 // 模型推荐配置
 export const MODEL_RECOMMENDATIONS: Record<string, string[]> = {
-  script: ['gpt-4o', 'claude-3-opus', 'qwen-max', 'gemini-1.5-pro'],
-  analysis: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gpt-4o', 'qwen-max'],
-  code: ['claude-3-sonnet', 'gpt-4o-mini', 'qwen-plus', 'glm-4'],
-  fast: ['gpt-4o-mini', 'gemini-1.5-flash', 'qwen-plus', 'ernie-speed']
+  // 脚本生成 - 2026年国产推荐
+  script: ['glm-5', 'minimax-m2.5', 'qwen-2.5', 'kimi-k2.5', 'ernie-5.0', 'doubao-2.0'],
+  // 视频分析
+  analysis: ['qwen-2.5', 'doubao-2.0', 'gemini-1.5-pro', 'kimi-k2.5'],
+  // 代码生成
+  code: ['qwen-2.5', 'glm-5', 'claude-3-sonnet', 'gpt-4o-mini'],
+  // 快速响应
+  fast: ['doubao-2.0', 'qwen-2.5', 'gpt-4o-mini', 'gemini-1.5-flash'],
+  // 长上下文
+  longContext: ['kimi-k2.5', 'minimax-m2.5', 'glm-5', 'gemini-1.5-pro'],
+  // 成本敏感
+  costEffective: ['doubao-2.0', 'glm-5', 'qwen-2.5', 'ernie-5.0'],
+  // 高质量
+  highQuality: ['gpt-4o', 'claude-3-opus', 'kimi-k2.5', 'qwen-2.5'],
+  // 图像生成
+  imageGeneration: ['seedream-5.0', 'kling-1.6', 'vidu-2.0'],
+  // 视频生成
+  videoGeneration: ['seedance-2.0', 'kling-1.6', 'vidu-2.0'],
+  // 国内首选
+  domestic: ['glm-5', 'minimax-m2.5', 'qwen-2.5', 'kimi-k2.5', 'ernie-5.0', 'doubao-2.0']
 };
 
 // 获取模型配置

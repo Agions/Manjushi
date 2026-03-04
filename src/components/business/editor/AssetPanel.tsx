@@ -15,7 +15,7 @@ import {
 } from 'antd';
 import { 
   UploadOutlined, 
-  VideoCameraOutlined, 
+  VideoCameraAddOutlined, 
   AudioOutlined, 
   FileImageOutlined,
   FileTextOutlined,
@@ -145,7 +145,7 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
           <img src={asset.thumbnail} className={styles.thumbnail} alt={asset.name} />
         ) : (
           <div className={styles.assetIconContainer}>
-            <VideoCameraOutlined className={styles.assetIcon} />
+            <VideoCameraAddOutlined className={styles.assetIcon} />
           </div>
         );
       case 'audio':

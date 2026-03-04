@@ -8,7 +8,7 @@ import type { AIModel, AIModelSettings, ScriptData, VideoAnalysis } from '@/core
 import { LLM_MODELS, DEFAULT_LLM_MODEL, MODEL_RECOMMENDATIONS } from '@/core/constants';
 
 // API 响应类型
-interface AIResponse {
+export interface AIResponse {
   content: string;
   usage?: {
     prompt_tokens: number;
@@ -19,7 +19,7 @@ interface AIResponse {
 }
 
 // 请求配置
-interface RequestConfig {
+export interface RequestConfig {
   model: string;
   messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>;
   temperature?: number;
@@ -29,6 +29,43 @@ interface RequestConfig {
 
 class AIService {
   private abortControllers: Map<string, AbortController> = new Map();
+
+  /**
+   * 通用生成方法
+   */
+  async generate(
+    prompt: string,
+    options: {
+      model: string;
+      provider: string;
+      signal?: AbortSignal;
+      temperature?: number;
+      max_tokens?: number;
+    }
+  ): Promise<string> {
+    const model = this.getModelById(options.model);
+    if (!model) {
+      throw new Error(`Model ${options.model} not found`);
+    }
+    
+    const settings: AIModelSettings = {
+      enabled: true,
+      apiKey: '',
+      baseURL: '',
+      model: model.id,
+      temperature: options.temperature,
+      max_tokens: options.max_tokens
+    };
+    
+    const response = await this.callAPI(model, settings, prompt);
+    
+    return response.content;
+  }
+
+  private getModelById(modelId: string): AIModel | undefined {
+    const { AI_MODELS } = require('@/core/config/models.config');
+    return AI_MODELS.find((m: AIModel) => m.id === modelId);
+  }
 
   /**
    * 生成脚本
@@ -161,15 +198,9 @@ ${script}
     settings: AIModelSettings,
     prompt: string
   ): Promise<AIResponse> {
-    const provider = MODEL_PROVIDERS[model.provider];
-    
-    if (!provider) {
-      throw new Error(`不支持的提供商: ${model.provider}`);
-    }
-
     // 构建请求配置
     const config: RequestConfig = {
-      model: settings.model || model.defaultModel || model.id,
+      model: settings.model || model.id,
       messages: [
         {
           role: 'system',
@@ -605,4 +636,3 @@ ${script}
 }
 
 export const aiService = new AIService();
-export default aiService;

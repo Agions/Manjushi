@@ -1,9 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import viteCompression from 'vite-plugin-compression'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    viteCompression({
+      algorithm: 'gzip',
+      ext: '.gz',
+      threshold: 10240,
+    }),
+  ],
   
   esbuild: {
     jsx: 'automatic',
@@ -45,7 +53,7 @@ export default defineConfig({
   },
 
   build: {
-    minify: false,
+    minify: 'terser',
     target: 'esnext',
     chunkSizeWarningLimit: 500,
     terserOptions: {

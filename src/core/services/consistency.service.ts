@@ -454,13 +454,3 @@ ${this.generateCharacterPrompt(char)}
 // 导出单例
 export const consistencyService = new ConsistencyService();
 export default ConsistencyService;
-
-// 导出类型
-export type {
-  Character,
-  DramaStyle,
-  ConsistencyRule,
-  ConsistencyCheckpoint,
-  ConsistencyIssue,
-  CharacterLibrary
-};

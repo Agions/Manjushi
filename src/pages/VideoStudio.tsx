@@ -13,8 +13,7 @@ import {
 } from '@ant-design/icons';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
-import { formatDistanceToNow } from 'date-fns';
-import { zh } from 'date-fns/locale';
+import { formatDistanceToNow, zhCN } from 'date-fns';
 
 // 导入样式
 import styles from './VideoStudio.module.less';
@@ -24,7 +23,8 @@ import VideoPlayer from '@/components/business/VideoPlayer';
 import ScriptEditor from '@/components/business/ScriptEditor';
 import VideoProcessController from '@/components/business/VideoProcessingController';
 import { loadProjectFromFile } from '@/core/services/legacy/tauriService';
-import type { Project, VideoMetadata, Script } from '@/core/types/legacy.types';
+import type { VideoMetadata, Script } from '@/core/types/legacy.types';
+import type { Project } from '@/types/index';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -57,7 +57,7 @@ const formatBitrate = (bitrate: number): string => {
 const formatDate = (dateStr: string): string => {
   try {
     const date = new Date(dateStr);
-    return formatDistanceToNow(date, { addSuffix: true, locale: zh });
+    return formatDistanceToNow(date, { addSuffix: true, locale: zhCN });
   } catch (e) {
     return dateStr;
   }

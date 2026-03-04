@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { useStore } from '@/store';
+import { useAppStore } from '@/core/stores';
 import { AI_MODELS, MODEL_PROVIDERS, getModelById, getModelsByProvider, getRecommendedModels } from '@/core/config/models.config';
 import type { AIModel, ModelProvider, ModelCategory, AIModelSettings } from '@/core/types';
 
@@ -20,7 +20,6 @@ export interface UseModelReturn {
   selectedProvider: ModelProvider | undefined;
   
   // 模型配置
-  modelSettings: AIModelSettings;
   isConfigured: boolean;
   
   // 操作方法
@@ -39,13 +38,10 @@ export interface UseModelReturn {
 }
 
 export function useModel(): UseModelReturn {
-  const store = useStore();
+  const store = useAppStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  // 从 store 获取当前选择的模型
-  const selectedModelId = store.selectedAIModel;
-  const modelSettings = store.aiModelsSettings[selectedModelId] || { enabled: false };
+  const [selectedModelId, setSelectedModelId] = useState<string>('glm-5');
   
   // 获取当前选中的模型详情
   const selectedModel = useMemo(() => {
@@ -57,10 +53,8 @@ export function useModel(): UseModelReturn {
   
   // 检查是否已配置
   const isConfigured = useMemo(() => {
-    if (!selectedModel) return false;
-    const settings = store.aiModelsSettings[selectedModel.provider];
-    return settings?.enabled && !!settings?.apiKey;
-  }, [selectedModel, store.aiModelsSettings]);
+    return !!selectedModel;
+  }, [selectedModel]);
   
   // 按提供商分组的模型
   const modelsByProvider = useMemo(() => {
@@ -70,13 +64,10 @@ export function useModel(): UseModelReturn {
     ) as Record<ModelProvider, AIModel[]>;
   }, []);
   
-  // 获取可用模型（已配置的）
+  // 获取可用模型
   const availableModels = useMemo(() => {
-    return AI_MODELS.filter(model => {
-      const settings = store.aiModelsSettings[model.provider];
-      return settings?.enabled && settings?.apiKey;
-    });
-  }, [store.aiModelsSettings]);
+    return AI_MODELS;
+  }, []);
   
   // 推荐模型
   const recommendedModels = useMemo(() => ({
@@ -90,17 +81,21 @@ export function useModel(): UseModelReturn {
   const selectModel = useCallback((modelId: string) => {
     const model = getModelById(modelId);
     if (model) {
-      store.setSelectedAIModel(modelId);
+      setSelectedModelId(modelId);
       setError(null);
     }
-  }, [store]);
+  }, []);
   
   // 更新设置
   const updateSettings = useCallback((settings: Partial<AIModelSettings>) => {
+    // 保存到 localStorage
     if (selectedModel) {
-      store.updateAIModelSettings(selectedModel.provider, settings);
+      const key = `ai_model_settings_${selectedModel.provider}`;
+      const current = localStorage.getItem(key);
+      const updated = current ? { ...JSON.parse(current), ...settings } : settings;
+      localStorage.setItem(key, JSON.stringify(updated));
     }
-  }, [selectedModel, store]);
+  }, [selectedModel]);
   
   // 配置 API
   const configureAPI = useCallback(async (
@@ -118,16 +113,11 @@ export function useModel(): UseModelReturn {
         throw new Error('未知的提供商');
       }
       
-      // 这里可以添加实际的 API 验证逻辑
-      // const isValid = await validateAPIKey(provider, apiKey, apiSecret);
-      
-      // 更新 store
-      store.updateAIModelSettings(provider, {
-        enabled: true,
-        apiKey,
-        apiSecret,
-        model: getModelsByProvider(provider)[0]?.id
-      });
+      // 保存到 localStorage
+      localStorage.setItem(`api_${provider}_key`, apiKey);
+      if (apiSecret) {
+        localStorage.setItem(`api_${provider}_secret`, apiSecret);
+      }
       
       return true;
     } catch (err) {
@@ -136,7 +126,7 @@ export function useModel(): UseModelReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [store]);
+  }, []);
   
   // 测试连接
   const testConnection = useCallback(async (): Promise<boolean> => {
@@ -162,7 +152,7 @@ export function useModel(): UseModelReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedModel, isConfigured, modelSettings]);
+  }, [selectedModel, isConfigured]);
   
   // 按分类过滤
   const filterByCategory = useCallback((category: ModelCategory): AIModel[] => {
@@ -181,7 +171,6 @@ export function useModel(): UseModelReturn {
     recommendedModels,
     selectedModel,
     selectedProvider,
-    modelSettings,
     isConfigured,
     selectModel,
     updateSettings,
@@ -216,7 +205,7 @@ export function useRecommendedModel(task: 'script' | 'analysis' | 'code' | 'fast
 
 // 使用模型成本估算
 export function useModelCost() {
-  const { selectedModel, modelSettings } = useModel();
+  const { selectedModel } = useModel();
   
   const estimateCost = useCallback((inputTokens: number, outputTokens: number): number => {
     if (!selectedModel?.pricing) return 0;

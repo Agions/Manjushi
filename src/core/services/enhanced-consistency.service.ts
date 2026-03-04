@@ -627,14 +627,3 @@ ${this.generateDramaStylePrompt(style)}
 // 导出单例
 export const enhancedConsistencyService = new EnhancedConsistencyService();
 export default EnhancedConsistencyService;
-
-// 导出类型
-export type {
-  Character,
-  CharacterAppearance,
-  CharacterExpressions,
-  CharacterVoice,
-  DramaStyle,
-  ConsistencyIssue,
-  CharacterLibrary
-};

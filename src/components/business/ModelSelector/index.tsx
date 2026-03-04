@@ -81,7 +81,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
   const {
     selectedModel,
     selectedProvider,
-    modelSettings,
+
     isConfigured,
     availableModels,
     selectModel,

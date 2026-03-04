@@ -347,4 +347,4 @@ const DramaWorkflowViewer: React.FC<DramaWorkflowViewerProps> = ({
 };
 
 export default DramaWorkflowViewer;
-export type { DramaWorkflowStep, StepStatus, DramaWorkflowViewerProps };
+export type { DramaWorkflowStep };

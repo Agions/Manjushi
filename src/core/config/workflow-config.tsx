@@ -68,12 +68,13 @@ export const WORKFLOW_STEPS = [
 ];
 
 // 工作流步骤配置接口
+export interface WorkflowStep {
   key: string;
   title: string;
-  icon: string;
+  icon: React.ReactNode;
   color: string;
   description: string;
-  settings: StepSetting[];
+  settings?: StepSetting[];
 }
 
 export interface StepSetting {

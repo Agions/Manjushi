@@ -3,8 +3,69 @@
  */
 
 // AI 模型类型
-export type ModelProvider = 'openai' | 'anthropic' | 'google' | 'baidu' | 'alibaba' | 'zhipu' | 'iflytek' | 'tencent';
-export type ModelCategory = 'text' | 'code' | 'image' | 'video' | 'all';
+export type ModelProvider = 'openai' | 'anthropic' | 'google' | 'baidu' | 'alibaba' | 'zhipu' | 'iflytek' | 'tencent' | 'minimax' | 'moonshot' | 'bytedance';
+export type ModelCategory = 'text' | 'code' | 'image' | 'video' | 'audio' | 'all';
+
+// TTS 提供商类型
+export type TTSProvider = 'edge' | 'azure' | 'aliyun' | 'baidu' | 'iflytek' | 'cosyvoice';
+
+// TTS 音色类型
+export interface TTSVoice {
+  id: string;
+  name: string;
+  gender: 'male' | 'female' | 'neutral';
+  language: string;
+  provider: TTSProvider;
+  style?: string;
+  description?: string;
+}
+
+// TTS 配置
+export interface TTSConfig {
+  provider: TTSProvider;
+  voice: string;
+  speed: number; // 0.5 - 2.0
+  pitch: number; // 0.5 - 2.0
+  volume: number; // 0 - 100
+  format: 'audio-16khz-32kbitrate-mono-mp3' | 'audio-16khz-64kbitrate-mono-mp3' | 'audio-24khz-48kbitrate-mono-mp3' | 'audio-24khz-96kbitrate-mono-mp3';
+}
+
+// TTS 请求
+export interface TTSRequest {
+  text: string;
+  config: TTSConfig;
+  signal?: AbortSignal;
+}
+
+// TTS 响应
+export interface TTSResponse {
+  audio: ArrayBuffer;
+  duration: number;
+  size: number;
+  format: string;
+}
+
+// TTS 流式响应片段
+export interface TTSStreamChunk {
+  audio: ArrayBuffer;
+  isFinal: boolean;
+}
+
+// 流式输出回调
+export interface StreamCallback<T> {
+  (chunk: T): void;
+  (error: Error): void;
+}
+
+// 流式生成选项
+export interface StreamOptions {
+  model: string;
+  messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>;
+  temperature?: number;
+  max_tokens?: number;
+  onChunk: (content: string, isFinal: boolean) => void;
+  signal?: AbortSignal;
+}
 
 // AI 模型
 export interface AIModel {
@@ -256,6 +317,8 @@ export interface ScriptTemplate {
   };
   examples: string[];
   recommended?: boolean;
+  isCustom?: boolean;
+  popularity?: number;
 }
 
 // 用户偏好
@@ -328,3 +391,18 @@ export type WorkflowStep =
   | 'export';
 
 export type { Timeline, TimelineSegment } from './legacy.types';
+
+
+// 漫剧工作流步骤
+export interface DramaWorkflowStep {
+  id: string;
+  name: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  progress: number;
+  error?: string;
+  startedAt?: string;
+  completedAt?: string;
+}
+
+export type StepStatus = DramaWorkflowStep['status'];
+

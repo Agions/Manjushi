@@ -426,6 +426,3 @@ ${suggestions.join('\n\n')}
 // 导出单例
 export const costService = new CostService();
 export default CostService;
-
-// 导出类型
-export type { CostRecord, CostStats, CostBudget };

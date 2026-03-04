@@ -21,14 +21,14 @@ export interface StoryboardTemplate {
   duration: number;
   tags: string[];
   usageCount: number;
-  createdAt: string;
+  createdAt?: string;
 }
 
 // 镜头模板
 export interface ShotTemplate {
   type: 'wide' | 'medium' | 'close' | 'extreme_close' | 'over_shoulder' | 'pov';
   angle: 'eye_level' | 'high' | 'low' | 'dutch' | 'bird' | 'worm';
-  movement: 'static' | 'pan' | 'tilt' | 'zoom' | 'track' | 'dolly';
+  movement: 'static' | 'pan' | 'tilt' | 'zoom' | 'track' | 'dolly' | 'shake';
   duration: number;
   description: string;
 }
@@ -517,15 +517,3 @@ class DramaTemplateService {
 // 导出单例
 export const dramaTemplateService = new DramaTemplateService();
 export default DramaTemplateService;
-
-// 导出类型
-export type {
-  StoryboardTemplate,
-  ShotTemplate,
-  SceneTemplate,
-  CharacterTemplate,
-  DialogueTemplate,
-  DialoguePattern,
-  StyleTemplate,
-  DramaTemplateType
-};

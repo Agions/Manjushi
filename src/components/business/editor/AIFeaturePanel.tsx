@@ -13,9 +13,9 @@ import {
   ClockCircleOutlined,
   SyncOutlined,
   StarOutlined,
-  VideoCameraOutlined,
+  VideoCameraAddOutlined,
   PictureOutlined,
-  BackgroundTextureOutlined,
+  BgColorsOutlined,
   FontColorsOutlined,
   EditOutlined
 } from '@ant-design/icons';
@@ -83,7 +83,7 @@ const aiFeatures = [
   },
   {
     key: 'background',
-    icon: <BackgroundTextureOutlined />,
+    icon: <BgColorsOutlined />,
     title: '背景音乐',
     description: '智能匹配背景音乐',
     tag: 'AI',
@@ -194,7 +194,7 @@ const AIFeaturePanel: React.FC<AIFeaturePanelProps> = ({
             </Button>
           </Tooltip>
           <Tooltip title="智能识别">
-            <Button icon={<VideoCameraOutlined />} className={styles.actionBtn}>
+            <Button icon={<VideoCameraAddOutlined />} className={styles.actionBtn}>
               内容分析
             </Button>
           </Tooltip>

@@ -410,6 +410,3 @@ class LipSyncService {
 // 导出单例
 export const lipSyncService = new LipSyncService();
 export default LipSyncService;
-
-// 导出类型
-export type { LipSyncConfig, LipSyncInput, LipSyncResult, LipData };

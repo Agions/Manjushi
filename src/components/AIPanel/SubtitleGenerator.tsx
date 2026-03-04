@@ -6,7 +6,7 @@ import {
 import { 
   FontSizeOutlined, PlayCircleOutlined, PauseCircleOutlined,
   DownloadOutlined, DeleteOutlined, PlusOutlined,
-  BgColorsOutlined, AlignmentCenterOutlined, AlignmentLeftOutlined,
+  BgColorsOutlined, AlignCenterOutlined, AlignLeftOutlined,
   CheckCircleOutlined, SyncOutlined, LoadingOutlined
 } from '@ant-design/icons';
 import styles from './SubtitleGenerator.module.less';
@@ -219,7 +219,7 @@ const SubtitleGenerator: React.FC = () => {
               <Tooltip title="左对齐">
                 <Button
                   type={style.alignment === 'left' ? 'primary' : 'default'}
-                  icon={<AlignmentLeftOutlined />}
+                  icon={<AlignLeftOutlined />}
                   onClick={() => setStyle({ ...style, alignment: 'left' })}
                   size="small"
                 />
@@ -227,7 +227,7 @@ const SubtitleGenerator: React.FC = () => {
               <Tooltip title="居中">
                 <Button
                   type={style.alignment === 'center' ? 'primary' : 'default'}
-                  icon={<AlignmentCenterOutlined />}
+                  icon={<AlignCenterOutlined />}
                   onClick={() => setStyle({ ...style, alignment: 'center' })}
                   size="small"
                 />

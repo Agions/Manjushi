@@ -14,7 +14,8 @@ import {
   SoundOutlined,
   ExpandOutlined,
   HolderOutlined,
-  SyncOutlined
+  SyncOutlined,
+  VideoCameraAddOutlined
 } from '@ant-design/icons';
 import styles from './SimpleTimeline.module.less';
 
@@ -207,7 +208,7 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
         {/* 左侧轨道标签 */}
         <div className={styles.trackLabels}>
           <div className={styles.trackLabel}>
-            <VideoCameraOutlined />
+            <VideoCameraAddOutlined />
             <span>视频轨道</span>
           </div>
           <div className={styles.trackLabel}>

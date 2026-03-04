@@ -10,10 +10,20 @@ export const DEFAULT_TEMPLATES: ScriptTemplate[] = [
     name: '专业解说',
     description: '正式专业的解说风格，适合知识类、科普类内容',
     category: 'professional',
-    style: 'formal',
-    tone: 'professional',
-    sample: '大家好，今天我们来探讨...',
     tags: ['知识', '科普', '正式'],
+    structure: [
+      { type: 'intro', name: '开场', duration: 10, description: '介绍主题' },
+      { type: 'hook', name: '引入', duration: 5, description: '吸引观众' },
+      { type: 'body', name: '主体', duration: 60, description: '核心内容' },
+      { type: 'conclusion', name: '总结', duration: 10, description: '总结要点' },
+      { type: 'cta', name: '引导', duration: 5, description: '引导互动' }
+    ],
+    style: {
+      tone: 'professional',
+      pace: 'medium',
+      formality: 'formal'
+    },
+    examples: ['大家好，今天我们来探讨...'],
     popularity: 95
   },
   {
@@ -21,10 +31,18 @@ export const DEFAULT_TEMPLATES: ScriptTemplate[] = [
     name: '轻松休闲',
     description: '轻松幽默的解说风格，适合娱乐类、搞笑类内容',
     category: 'casual',
-    style: 'casual',
-    tone: 'friendly',
-    sample: '哈喽各位，今天给大家带来...',
     tags: ['搞笑', '娱乐', '轻松'],
+    structure: [
+      { type: 'hook', name: '开场', duration: 8, description: '幽默开场' },
+      { type: 'body', name: '主体', duration: 55, description: '轻松内容' },
+      { type: 'conclusion', name: '结尾', duration: 7, description: '轻松结尾' }
+    ],
+    style: {
+      tone: 'friendly',
+      pace: 'fast',
+      formality: 'casual'
+    },
+    examples: ['哈喽各位，今天给大家带来...'],
     popularity: 88
   },
   {
@@ -32,10 +50,19 @@ export const DEFAULT_TEMPLATES: ScriptTemplate[] = [
     name: '故事叙述',
     description: '讲故事的解说风格，适合剧情类、情感类内容',
     category: 'story',
-    style: 'narrative',
-    tone: 'emotional',
-    sample: '在那个遥远的年代，有一个传说...',
     tags: ['故事', '剧情', '情感'],
+    structure: [
+      { type: 'hook', name: '引入', duration: 10, description: '设置悬念' },
+      { type: 'body', name: '发展', duration: 50, description: '故事展开' },
+      { type: 'transition', name: '高潮', duration: 15, description: '情感高潮' },
+      { type: 'conclusion', name: '结局', duration: 10, description: '故事结局' }
+    ],
+    style: {
+      tone: 'emotional',
+      pace: 'slow',
+      formality: 'neutral'
+    },
+    examples: ['在那个遥远的年代，有一个传说...'],
     popularity: 76
   },
   {
@@ -43,10 +70,18 @@ export const DEFAULT_TEMPLATES: ScriptTemplate[] = [
     name: '游戏解说',
     description: '激情澎湃的游戏解说风格，适合游戏类内容',
     category: 'gaming',
-    style: 'energetic',
-    tone: 'excited',
-    sample: '这波操作太秀了！兄弟们看好了...',
     tags: ['游戏', '电竞', '激情'],
+    structure: [
+      { type: 'hook', name: '开场', duration: 5, description: '激情开场' },
+      { type: 'body', name: '实战', duration: 65, description: '游戏内容' },
+      { type: 'conclusion', name: '总结', duration: 5, description: '赛后总结' }
+    ],
+    style: {
+      tone: 'excited',
+      pace: 'fast',
+      formality: 'casual'
+    },
+    examples: ['这波操作太秀了！兄弟们看好了...'],
     popularity: 82
   },
   {
@@ -54,10 +89,18 @@ export const DEFAULT_TEMPLATES: ScriptTemplate[] = [
     name: '影评风格',
     description: '专业的影评解说风格，适合电影类内容',
     category: 'review',
-    style: 'critical',
-    tone: 'analytical',
-    sample: '从镜头语言来看，导演在这里运用了...',
     tags: ['电影', '影评', '专业'],
+    structure: [
+      { type: 'intro', name: '引入', duration: 8, description: '电影介绍' },
+      { type: 'body', name: '分析', duration: 55, description: '深度分析' },
+      { type: 'conclusion', name: '总结', duration: 12, description: '总结评价' }
+    ],
+    style: {
+      tone: 'analytical',
+      pace: 'medium',
+      formality: 'formal'
+    },
+    examples: ['从镜头语言来看，导演在这里运用了...'],
     popularity: 70
   }
 ];

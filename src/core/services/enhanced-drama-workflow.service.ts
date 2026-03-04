@@ -5,6 +5,7 @@
 
 import { novelService } from './novel.service';
 import { consistencyService } from './consistency.service';
+import type { Character } from './consistency.service';
 import { aiService } from './ai.service';
 import { storageService } from './storage.service';
 import { lipSyncService } from './lip-sync.service';
@@ -13,15 +14,15 @@ import {
   withTimeout,
   workflowCache,
   checkpointStorage,
-  createCheckpoint
+  createCheckpoint,
+  SimpleCache
 } from './workflow-enhance.service';
 import type { RetryConfig } from './workflow-enhance.service';
 import type {
   NovelParseResult,
   Script,
-  Storyboard,
-  Character
-} from '@/core/types';
+  Storyboard
+} from './novel.service';
 
 // 增强的工作流步骤 - 包含 lip-sync
 export type DramaWorkflowStep =
@@ -81,8 +82,8 @@ export interface DramaWorkflowConfig {
 
 // 步骤结果缓存 key
 function getStepCacheKey(step: string, content: string, config: any): string {
-  const contentHash = workflowCache.hashContent(content);
-  const configHash = workflowCache.hashContent(JSON.stringify(config));
+  const contentHash = SimpleCache.hashContent(content);
+  const configHash = SimpleCache.hashContent(JSON.stringify(config));
   return `${step}_${contentHash}_${configHash}`;
 }
 
@@ -313,7 +314,7 @@ class EnhancedDramaWorkflowService {
     this.updateState({ step: 'storyboard-generate', progress: 45 });
 
     const allStoryboards: Storyboard[] = [];
-    const storyboardHash = workflowCache.hashContent(JSON.stringify(script));
+    const storyboardHash = SimpleCache.hashContent(JSON.stringify(script));
 
     for (let i = 0; i < script.scenes.length; i++) {
       const scene = script.scenes[i];
@@ -420,7 +421,7 @@ class EnhancedDramaWorkflowService {
 
       try {
         const sceneResult = await this.generateWithRetry(() =>
-          aiService.chat(renderPrompt, { provider: this.config.provider, model: this.config.model })
+          aiService.generate(renderPrompt, { provider: this.config.provider, model: this.config.model })
         );
 
         return {
@@ -510,7 +511,7 @@ class EnhancedDramaWorkflowService {
 
       try {
         const sceneResult = await this.generateWithRetry(() =>
-          aiService.chat(renderPrompt, { provider: this.config.provider, model: this.config.model })
+          aiService.generate(renderPrompt, { provider: this.config.provider, model: this.config.model })
         );
 
         scenes.push({
@@ -683,7 +684,7 @@ class EnhancedDramaWorkflowService {
       }
     };
 
-    await storageService.save(`export-${projectId}`, timeline);
+    await storageService.projects.save({ id: projectId, ...timeline } as any);
 
     this.updateData({ exportUrl: `export://${projectId}/output.mp4` });
     this.updateState({ progress: 100 });

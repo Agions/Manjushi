@@ -5,15 +5,15 @@
 
 import { novelService } from './novel.service';
 import { consistencyService } from './consistency.service';
+import type { Character } from './consistency.service';
 import { aiService } from './ai.service';
 import { storageService } from './storage.service';
 import type {
   NovelParseResult,
   Script,
   ScriptScene,
-  Storyboard,
-  Character
-} from '@/core/types';
+  Storyboard
+} from './novel.service';
 
 // 工作流步骤
 export type DramaWorkflowStep =
@@ -323,7 +323,7 @@ class DramaWorkflowService {
 
       // 调用 AI 图像生成（通过 aiService）
       try {
-        const sceneResult = await aiService.chat(
+        const sceneResult = await aiService.generate(
           `作为场景渲染引擎，根据以下分镜描述生成详细的漫画场景描述（用于后续图像生成）：\n\n${renderPrompt}`,
           { provider: config.provider, model: config.model }
         );
@@ -507,7 +507,7 @@ class DramaWorkflowService {
     };
 
     // 保存导出配置
-    await storageService.save(`export-${projectId}`, timeline);
+    await storageService.projects.save({ id: projectId, ...timeline } as any);
 
     this.updateData({
       exportUrl: `export://${projectId}/output.mp4`
@@ -584,12 +584,3 @@ class DramaWorkflowService {
 // 导出单例
 export const dramaWorkflowService = new DramaWorkflowService();
 export default DramaWorkflowService;
-
-// 导出类型
-export type {
-  DramaWorkflowStep,
-  DramaWorkflowState,
-  DramaWorkflowData,
-  DramaWorkflowConfig,
-  DramaWorkflowCallbacks
-};

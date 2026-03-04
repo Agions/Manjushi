@@ -6,7 +6,7 @@
 import React from 'react';
 import { Card, Select, Slider, Switch, Input, Collapse, Tag, Space, Divider } from 'antd';
 import { SettingOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import type { StepSetting } from '../config/workflow-config';
+import type { StepSetting } from '@/core/config/workflow-config';
 
 interface StepSettingsProps {
   settings: StepSetting[];
