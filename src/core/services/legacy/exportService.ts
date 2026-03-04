@@ -48,8 +48,14 @@ export const exportScript = async (
         filters = [{ name: 'HTML文件', extensions: ['html'] }];
         break;
       default:
-        message.error(`不支持的导出格式: ${format}`);
-        return false;
+        // 支持字符串格式
+        if (format === 'html') {
+          content = formatAsHtml(script);
+          filters = [{ name: 'HTML文件', extensions: ['html'] }];
+        } else {
+          message.error(`不支持的导出格式: ${format}`);
+          return false;
+        }
     }
     
     return await saveFile(

@@ -41,6 +41,7 @@ import {
 } from '@ant-design/icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { ExportSettings } from '@/core/types';
+import { useEditor } from '@/core/hooks/useEditor';
 import styles from './index.module.less';
 
 const { Content, Sider } = Layout;
@@ -61,8 +62,9 @@ const EXPORT_SETTINGS: ExportSettings = {
   format: 'mp4',
   resolution: '1080p',
   quality: 'high',
-  fps: 30,
-  bitrate: '8M'
+  frameRate: 30,
+  includeSubtitles: false,
+  burnSubtitles: false
 };
 
 export const EditorPage: React.FC = () => {

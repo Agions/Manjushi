@@ -12,7 +12,7 @@ import {
   ScissorOutlined
 } from '@ant-design/icons';
 import { v4 as uuidv4 } from 'uuid';
-import { useLegacyStore } from '@/core/stores';
+import { useProjectStore, useLegacyStore } from '@/core/stores';
 import VideoInfo from '@/components/business/VideoInfo';
 import ScriptEditor from '@/components/business/ScriptEditor';
 import VideoEditor from '@/components/business/VideoEditor';
@@ -27,7 +27,8 @@ const { Option } = Select;
 const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { projects, updateProject, deleteProject, selectedAIModel, aiModelsSettings } = useLegacyStore();
+  const { projects, updateProject, deleteProject } = useProjectStore();
+  const { selectedAIModel, aiModelsSettings } = useLegacyStore();
   const [loading, setLoading] = useState(true);
   const [aiLoading, setAiLoading] = useState(false);
   const [project, setProject] = useState<any>(null);
@@ -79,7 +80,7 @@ const ProjectDetail: React.FC = () => {
       message.loading('正在保存脚本...', 0.5);
       saveProjectToFile(updatedProject)
         .then(() => {
-          updateProject(updatedProject);
+          updateProject(updatedProject.id, updatedProject);
           message.success('脚本创建成功');
         })
         .catch(error => {

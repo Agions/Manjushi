@@ -7,6 +7,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Button, Drawer, Tooltip, Badge, Avatar, Dropdown, Space, Typography } from 'antd';
+import type { MenuProps } from 'antd';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   HomeOutlined,
@@ -157,7 +158,7 @@ const MainLayout: React.FC = () => {
       mode="inline"
       selectedKeys={[location.pathname === '/' ? '/' : `/${location.pathname.split('/')[1]}`]}
       defaultSelectedKeys={['/']}
-      items={menuItems}
+      items={menuItems as MenuProps['items']}
       onClick={({ key }) => navigate(key)}
       className={styles.mainMenu}
     />
@@ -187,7 +188,7 @@ const MainLayout: React.FC = () => {
           
           {tauriSupported && (
             <Tooltip title="通知中心">
-              <Badge count={notifications} size="small" offset={[-2, 2]}>
+              <Badge count={notifications.length} size="small" offset={[-2, 2]}>
                 <Button 
                   type="text" 
                   icon={<BellOutlined />} 
@@ -198,7 +199,7 @@ const MainLayout: React.FC = () => {
             </Tooltip>
           )}
 
-          <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" arrow>
+          <Dropdown menu={{ items: userMenuItems as MenuProps['items'] }} placement="bottomRight" arrow>
             <div className={styles.avatarContainer}>
               <Avatar
                 size="default"

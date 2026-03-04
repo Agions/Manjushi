@@ -265,8 +265,8 @@ class EnhancedConsistencyService {
     let expressionText: string;
     if (expressions.custom[emotion] !== undefined) {
       expressionText = expressions.custom[emotion];
-    } else if (emotion in expressions) {
-      expressionText = expressions[emotion as keyof typeof expressions] || expressions.neutral;
+    } else if (emotion in expressions && typeof expressions[emotion as keyof typeof expressions] === 'string') {
+      expressionText = expressions[emotion as keyof typeof expressions] as string;
     } else {
       expressionText = expressions.neutral;
     }
